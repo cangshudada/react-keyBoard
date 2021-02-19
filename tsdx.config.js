@@ -19,7 +19,7 @@ module.exports = {
           }),
         ],
         inject: false,
-        extract: 'react-easy-popup.min.css',
+        extract: 'keyboard.min.css',
       })
     );
     return config;

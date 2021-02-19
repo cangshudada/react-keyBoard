@@ -33,7 +33,7 @@ const App = () => {
           />
         </div>
       </form>
-      <KeyBoard />
+      <KeyBoard blurHide={false} />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import './assets/css/_BASE_.less';
 import classNames from 'classnames';
 import { axiosConfig } from './helper/axiosConfig';
 import { CSSTransition } from 'react-transition-group';
-
+import DragHandle from './components/dragHandle';
 export interface IOptions {
   /** Binding value */
   value?: string | number;
@@ -45,9 +45,9 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
   // 键盘显隐控制
   const [keyBoardVisible, setKeyBoardVisible] = useState<boolean>(false);
   // 键盘展示模式
-  const [keyBoardShowMode, setKeyBoardShowMode] = useState<string>('default');
+  const [, setKeyBoardShowMode] = useState<string>('default');
   // 中文模式下显示字符
-  const [resultVal, setResultVal] = useState<{
+  const [, setResultVal] = useState<{
     code?: string;
     value?: string;
   }>({});
@@ -125,9 +125,18 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
           event.preventDefault();
         }}
       >
+        {/* 键盘主体 */}
         <div className="key-board-container">
+          {/* 结果展示 */}
           <div className="key-board-area"></div>
         </div>
+        {/* 拖拽句柄 */}
+        {options.showHandleBar && (
+          <DragHandle
+            color={options.color}
+            dargHandleText={options.dargHandleText}
+          />
+        )}
       </div>
     </CSSTransition>
   );
@@ -135,11 +144,12 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 
 // Specifies the default values for props:
 KeyBoard.defaultProps = {
-  color: "#eaa050",
-  modeList: ["handwrite", "symbol"],
+  color: '#eaa050',
+  modeList: ['handwrite', 'symbol'],
   blurHide: true,
   showHandleBar: true,
-  closeOnClickModal: true
+  closeOnClickModal: true,
+  dargHandleText: '将键盘拖到您喜欢的位置',
 };
 
 export default KeyBoard;
