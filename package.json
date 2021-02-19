@@ -11,6 +11,7 @@
     "node": ">=10"
   },
   "scripts": {
+    "svgr": "npx @svgr/cli@5.4.0 -d src/Icons/ src/assets/images/",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
@@ -41,7 +42,8 @@
   "name": "react-keyboard",
   "author": "cangshudada",
   "module": "dist/react-keyboard.esm.js",
-  "size-limit": [{
+  "size-limit": [
+    {
       "path": "dist/react-keyboard.cjs.production.min.js",
       "limit": "10 KB"
     },
@@ -55,11 +57,23 @@
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
     "husky": "^5.0.9",
+    "less": "^4.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "size-limit": "^4.9.2",
     "tsdx": "^0.14.1",
     "tslib": "^2.1.0",
     "typescript": "^4.1.4"
+  },
+  "dependencies": {
+    "@types/classnames": "^2.2.11",
+    "@types/react-transition-group": "^4.4.0",
+    "autoprefixer": "^9.8.6",
+    "axios": "^0.21.1",
+    "classnames": "^2.2.6",
+    "cssnano": "^4.1.10",
+    "postcss-pxtorem": "^5.1.1",
+    "react-transition-group": "^4.4.1",
+    "rollup-plugin-postcss": "^4.0.0"
   }
 }
