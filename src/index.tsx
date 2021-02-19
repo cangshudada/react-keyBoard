@@ -1,10 +1,13 @@
 import './libs/flexible.js';
-import React, { useState, useEffect } from 'react';
 import './assets/css/_BASE_.less';
 import classNames from 'classnames';
+import HandBoard from './components/handWrite';
+import DefaultBoard from './components/default';
+import React, { useState, useEffect } from 'react';
 import { axiosConfig } from './helper/axiosConfig';
 import { CSSTransition } from 'react-transition-group';
-import DragHandle from './components/dragHandle';
+import DragHandle from './components/dragHandleBar/dragHandle';
+
 export interface IOptions {
   /** Binding value */
   value?: string | number;
@@ -45,7 +48,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
   // 键盘显隐控制
   const [keyBoardVisible, setKeyBoardVisible] = useState<boolean>(false);
   // 键盘展示模式
-  const [, setKeyBoardShowMode] = useState<string>('default');
+  const [keyBoardMode, setKeyBoardShowMode] = useState<string>('default');
   // 中文模式下显示字符
   const [, setResultVal] = useState<{
     code?: string;
@@ -127,7 +130,10 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     setKeyBoardVisible(true);
 
     // 赋值当前事件触发的input
-    currentInput = event.target as HTMLInputElement | null;
+    currentInput = event.target as HTMLInputElement;
+
+    // 设置默认的键盘显示模式
+    setDefaultKeyBoardMode(currentInput.getAttribute('data-mode') as string);
 
     // 显示遮罩层
     if (document.querySelector('.key-board-modal')) {
@@ -167,6 +173,48 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     }
   }
 
+  /**
+   * @description 设置初始化键盘模式
+   */
+  function setDefaultKeyBoardMode(mode: string) {
+    switch (mode) {
+      // 英文键盘
+      case 'en':
+        setKeyBoardShowMode('default');
+        // TODO
+        break;
+      // 数字键盘
+      case 'number':
+        setKeyBoardShowMode('default');
+        // TODO
+        break;
+      // 手写键盘
+      case 'handwrite':
+        if (
+          options.modeList?.find(mode => mode === 'handwrite') &&
+          options.handApi
+        ) {
+          setKeyBoardShowMode('handwrite');
+          // TODO
+        } else {
+          setKeyBoardShowMode('default');
+        }
+        break;
+      // 标点键盘
+      case 'symbol':
+        setKeyBoardShowMode('default');
+        // 如果存在标点键盘才允许切换
+        if (options.modeList?.find(mode => mode === 'symbol')) {
+          // TODO
+        }
+        break;
+      // 默认
+      default:
+        setKeyBoardShowMode('default');
+        break;
+    }
+  }
+
   return (
     <CSSTransition
       in={keyBoardVisible}
@@ -183,7 +231,12 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
         {/* 键盘主体 */}
         <div className="key-board-container">
           {/* 结果展示 */}
-          <div className="key-board-area"></div>
+          <div className="key-board-area">
+            {/* 默认键盘 */}
+            {keyBoardMode === 'default' && <DefaultBoard />}
+            {/* 手写键盘 */}
+            {keyBoardMode === 'handwrite' && <HandBoard />}
+          </div>
         </div>
         {/* 拖拽句柄 */}
         {options.showHandleBar && (

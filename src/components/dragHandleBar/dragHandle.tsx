@@ -1,6 +1,6 @@
-import DragIcon from '../Icons/Drag';
+import DragIcon from '../../Icons/Drag';
 import React, { useEffect } from 'react';
-import { handleDragEvent } from '../utils/drag';
+import { handleDragEvent } from '../../utils/drag';
 
 export interface IProps {
   color?: string;
@@ -13,7 +13,7 @@ const DragHandle: React.FC<IProps> = props => {
     if (document.querySelector('.key-board-drag-handle')) {
       const dragHandle = document.querySelector(
         '.key-board-drag-handle'
-      ) as HTMLElement;+
+      ) as HTMLElement;
       // 注册拖拽
       handleDragEvent(dragHandle);
     }
