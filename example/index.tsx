@@ -33,7 +33,7 @@ const App = () => {
           />
         </div>
       </form>
-      <KeyBoard blurHide={false} />
+      <KeyBoard modal/>
     </div>
   );
 };

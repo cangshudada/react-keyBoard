@@ -1,7 +1,7 @@
 /**
  * @description 深拷贝数组或者对象
  * @param {T} target
- * @returns
+ * @returns {T} 深拷贝后的数组或者对象
  */
 export const deepCopy = <T extends Array<T> | any>(sourceData: T): T => {
   if (Array.isArray(sourceData)) {

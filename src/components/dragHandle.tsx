@@ -13,7 +13,8 @@ const DragHandle: React.FC<IProps> = props => {
     if (document.querySelector('.key-board-drag-handle')) {
       const dragHandle = document.querySelector(
         '.key-board-drag-handle'
-      ) as HTMLElement;
+      ) as HTMLElement;+
+      // 注册拖拽
       handleDragEvent(dragHandle);
     }
   }, []);

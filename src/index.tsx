@@ -54,9 +54,53 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 
   // 键盘组件初始化准备
   useEffect(() => {
+    options.modal && addMoDal();
     // 注册键盘
     signUpKeyboard();
+
+    // destory hook
+    return () => {
+      document
+        .querySelector('.key-board-modal')
+        ?.removeEventListener('click', modalClick);
+      inputList.forEach(input => {
+        input.removeEventListener('focus', showKeyBoard);
+        input.removeEventListener('blur', hideKeyBoard);
+      });
+    };
   }, []);
+
+  /**
+   * @description 新增modal
+   */
+  function addMoDal() {
+    // 如果modal存在的话继续绑定事件 - 此处解决多路由页面切换时造成的bug
+    if (document.querySelector('.key-board-modal')) {
+      document
+        .querySelector('.key-board-modal')
+        ?.addEventListener('click', modalClick);
+      return;
+    }
+
+    // 如果不存在modal则创建一个modal遮罩层
+    const modalDom = document.createElement('div');
+    modalDom.className = 'key-board-modal';
+    modalDom.style.display = 'none';
+    document.querySelector('body')?.appendChild(modalDom);
+    modalDom.addEventListener('click', modalClick);
+  }
+
+  /**
+   * @description 点击遮罩层
+   */
+  function modalClick() {
+    // 如果点击遮罩层允许关闭则触发键盘隐藏事件
+    options.closeOnClickModal && hideKeyBoard();
+
+    if (options.modalClick) {
+      options.modalClick();
+    }
+  }
 
   /**
    * @description 注册键盘
@@ -79,8 +123,19 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
    * @description 显示键盘
    */
   function showKeyBoard(event: FocusEvent) {
+    // 显示键盘
     setKeyBoardVisible(true);
+
+    // 赋值当前事件触发的input
     currentInput = event.target as HTMLInputElement | null;
+
+    // 显示遮罩层
+    if (document.querySelector('.key-board-modal')) {
+      const keyBoardModal = document.querySelector(
+        '.key-board-modal'
+      ) as HTMLElement;
+      keyBoardModal.style.display = 'block';
+    }
   }
 
   /**

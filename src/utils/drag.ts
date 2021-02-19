@@ -1,3 +1,7 @@
+/**
+ * @description 句柄拖拽事件
+ * @param {HTMLElement} target
+ */
 export const handleDragEvent = (target: HTMLElement) => {
   const targetParent = target.parentNode as HTMLElement;
   // PC端
