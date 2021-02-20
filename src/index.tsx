@@ -1,6 +1,7 @@
 import './libs/flexible.js';
 import './assets/css/_BASE_.less';
 import classNames from 'classnames';
+import Result from './components/result';
 import HandBoard from './components/handWrite';
 import DefaultBoard from './components/default';
 import React, { useState, useEffect } from 'react';
@@ -231,6 +232,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
         {/* 键盘主体 */}
         <div className="key-board-container">
           {/* 结果展示 */}
+          <Result />
           <div className="key-board-area">
             {/* 默认键盘 */}
             {keyBoardMode === 'default' && <DefaultBoard />}
@@ -254,7 +256,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 KeyBoard.defaultProps = {
   color: '#eaa050',
   modeList: ['handwrite', 'symbol'],
-  blurHide: true,
+  blurHide: false,
   showHandleBar: true,
   closeOnClickModal: true,
   dargHandleText: '将键盘拖到您喜欢的位置',

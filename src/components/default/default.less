@@ -1,0 +1,32 @@
+.default-key-board {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+    .line {
+      height: 90px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 1350px;
+  
+      &.line1 {
+        margin-top: 50px;
+      }
+      &.line2 {
+        width: 1210px;
+      }
+      &.line4 {
+        margin-top: 40px;
+  
+        .key-board-button {
+          & + .key-board-button {
+            margin-left: 40px;
+          }
+        }
+      }
+    }
+  }

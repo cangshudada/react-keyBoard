@@ -2,7 +2,7 @@
  * @description 句柄拖拽事件
  * @param {HTMLElement} target
  */
-export const handleDragEvent = (target: HTMLElement) => {
+export default function handleDragEvent(target: HTMLElement) {
   const targetParent = target.parentNode as HTMLElement;
   // PC端
   target.onmousedown = (event: MouseEvent) => {
@@ -48,4 +48,4 @@ export const handleDragEvent = (target: HTMLElement) => {
       document.ontouchend = null;
     };
   };
-};
+}

@@ -1,6 +1,6 @@
-import DragIcon from '../../Icons/Drag';
+import DragIcon from '../../icons/drag';
 import React, { useEffect } from 'react';
-import { handleDragEvent } from '../../utils/drag';
+import handleDragEvent from '../../hooks/useDrag';
 
 export interface IProps {
   color?: string;

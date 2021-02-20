@@ -1,6 +1,0 @@
-export { default as Back } from './Back'
-export { default as Close } from './Close'
-export { default as Delete } from './Delete'
-export { default as Drag } from './Drag'
-export { default as Handwrite } from './Handwrite'
-export { default as Upper } from './Upper'
