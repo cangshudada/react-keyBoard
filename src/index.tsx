@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import Result from './components/result';
 import HandBoard from './components/handWrite';
 import DefaultBoard from './components/default';
-import React, { useState, useEffect } from 'react';
 import { axiosConfig } from './helper/axiosConfig';
 import { CSSTransition } from 'react-transition-group';
 import DragHandle from './components/dragHandleBar/dragHandle';
+import React, { useState, useEffect, createContext } from 'react';
 
 export interface IOptions {
   /** Binding value */
@@ -39,6 +39,20 @@ export interface IOptions {
   /** keyboard modal click hook */
   modalClick?: () => void;
 }
+
+export const KeyBoardContext = createContext<{
+  color: string;
+  modeList: ('handwrite' | 'symbol')[];
+  handApi?: string;
+  closeKeyBoard: () => void;
+  changeDefaultBoard: () => void;
+}>({
+  color: '#eaa050',
+  modeList: ['handwrite', 'symbol'],
+  handApi: '',
+  closeKeyBoard: () => {},
+  changeDefaultBoard: () => {},
+});
 
 // 注册键盘绑定的input列表
 let inputList: HTMLInputElement[] = [];
@@ -223,31 +237,41 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
       timeout={300}
       unmountOnExit
     >
-      <div
-        className="key-board"
-        onMouseDown={event => {
-          event.preventDefault();
+      <KeyBoardContext.Provider
+        value={{
+          color: options.color || '#eaa050',
+          modeList: options.modeList || ['handwrite', 'symbol'],
+          handApi: options.handApi,
+          closeKeyBoard: () => {},
+          changeDefaultBoard: () => {},
         }}
       >
-        {/* 键盘主体 */}
-        <div className="key-board-container">
-          {/* 结果展示 */}
-          <Result />
-          <div className="key-board-area">
-            {/* 默认键盘 */}
-            {keyBoardMode === 'default' && <DefaultBoard />}
-            {/* 手写键盘 */}
-            {keyBoardMode === 'handwrite' && <HandBoard />}
+        <div
+          className="key-board"
+          onMouseDown={event => {
+            event.preventDefault();
+          }}
+        >
+          {/* 键盘主体 */}
+          <div className="key-board-container">
+            {/* 结果展示 */}
+            <Result />
+            <div className="key-board-area">
+              {/* 默认键盘 */}
+              {keyBoardMode === 'default' && <DefaultBoard />}
+              {/* 手写键盘 */}
+              {keyBoardMode === 'handwrite' && <HandBoard />}
+            </div>
           </div>
+          {/* 拖拽句柄 */}
+          {options.showHandleBar && (
+            <DragHandle
+              color={options.color}
+              dargHandleText={options.dargHandleText}
+            />
+          )}
         </div>
-        {/* 拖拽句柄 */}
-        {options.showHandleBar && (
-          <DragHandle
-            color={options.color}
-            dargHandleText={options.dargHandleText}
-          />
-        )}
-      </div>
+      </KeyBoardContext.Provider>
     </CSSTransition>
   );
 };

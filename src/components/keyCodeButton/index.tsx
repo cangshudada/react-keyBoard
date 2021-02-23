@@ -1,11 +1,12 @@
 import './keyCodeButton.less';
 import classNames from 'classnames';
-import React, { useState } from 'react';
 import BackIcon from '../../icons/back';
 import CloseIcon from '../../icons/close';
 import UpperIcon from '../../icons//upper';
 import DeleteIcon from '../../icons/delete';
+import { KeyBoardContext } from '../../index';
 import HandWriteIcon from '../../icons/handwrite';
+import React, { useState, useContext } from 'react';
 
 export interface IProps {
   type: string;
@@ -19,6 +20,7 @@ export interface IProps {
 
 const KeyCodeButton: React.FC<IProps> = props => {
   const [isHover, setHoverStatus] = useState(false);
+  const { color } = useContext(KeyBoardContext);
 
   /**
    * @description 获取样式
@@ -33,11 +35,11 @@ const KeyCodeButton: React.FC<IProps> = props => {
     ) {
       return {
         color: '#f5f5f5',
-        // background: props.color,
+        background: color,
       };
     } else {
       return {
-        // color: props.color,
+        color: color,
         background: '#f5f5f5',
       };
     }
@@ -90,15 +92,15 @@ const KeyCodeButton: React.FC<IProps> = props => {
     >
       {props.type === 'back' ? (
         // 图标按键
-        <BackIcon fill="none" stroke={"#ff0000"}/>
+        <BackIcon fill="none" stroke={color} />
       ) : props.type === 'close' ? (
-        <CloseIcon fill="none" stroke={"#ff0000"}/>
+        <CloseIcon fill="none" stroke={color} />
       ) : props.type === 'handwrite' ? (
-        <HandWriteIcon fill="none" stroke={"#ff0000"}/>
+        <HandWriteIcon fill="none" stroke={color} />
       ) : props.type === 'delete' ? (
-        <DeleteIcon fill="none" stroke={"#ff0000"}/>
+        <DeleteIcon fill="none" stroke={color} />
       ) : props.type === 'upper' ? (
-        <UpperIcon fill="none" stroke={"#ff0000"}/>
+        <UpperIcon fill="none" stroke={color} />
       ) : (
         // 按键
         <span dangerouslySetInnerHTML={getCode()}></span>
