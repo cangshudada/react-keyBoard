@@ -33,7 +33,15 @@ const App = () => {
           />
         </div>
       </form>
-      <KeyBoard modal/>
+      <KeyBoard
+        modal
+        onChange={value => {
+          console.log('value', value);
+        }}
+        keyChange={value => {
+          console.log('value', value);
+        }}
+      />
     </div>
   );
 };

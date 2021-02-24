@@ -5,13 +5,14 @@ import Result from './components/result';
 import HandBoard from './components/handWrite';
 import DefaultBoard from './components/default';
 import { axiosConfig } from './helper/axiosConfig';
+import { pinYinNote } from './constants/pinyin_dict_note';
 import { CSSTransition } from 'react-transition-group';
 import DragHandle from './components/dragHandleBar/dragHandle';
 import React, { useState, useEffect, createContext } from 'react';
 
 export interface IOptions {
-  /** Binding value */
-  value?: string | number;
+  /** value auto change */
+  autoChange?: boolean;
   /** theme color - support rgb or hex - default("#eaa050") */
   color?: string;
   /** mode list - support symbol or handwrite keyboard - default(["handwrite", "symbol"]) */
@@ -33,7 +34,7 @@ export interface IOptions {
   /** key change */
   keyChange?: (value: string) => void;
   /** value change */
-  change?: (value: string) => void;
+  onChange?: (value: string) => void;
   /** keyboard close hook */
   closed?: () => void;
   /** keyboard modal click hook */
@@ -65,7 +66,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
   // 键盘展示模式
   const [keyBoardMode, setKeyBoardShowMode] = useState<string>('default');
   // 中文模式下显示字符
-  const [, setResultVal] = useState<{
+  const [resultVal, setResultVal] = useState<{
     code?: string;
     value?: string;
   }>({});
@@ -230,6 +231,83 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     }
   }
 
+  /**
+   * @description 模式切换
+   * @param {(Record<'data' | 'type', string>)} {type}
+   */
+  function trigger({ type }: Record<'data' | 'type', string>) {
+    switch (type) {
+      case 'handwrite':
+        {
+          setKeyBoardShowMode('handwrite');
+        }
+        break;
+      case 'delete':
+        {
+          if (!currentInput) return;
+          const changeValue = currentInput.value.substr(
+            0,
+            currentInput.value.length - 1
+          );
+
+          // 自动改变
+          if (options.autoChange) {
+            currentInput.value = changeValue;
+          }
+
+          // 触发change事件
+          if (options.onChange) {
+            options.onChange(changeValue);
+          }
+        }
+        break;
+    }
+  }
+
+  /**
+   * @description 文字改变
+   * @param {string} value
+   */
+  function change(value: string) {
+    if (!currentInput) return;
+
+    const changeValue = currentInput.value + value;
+
+    // 自动改变
+    if (options.autoChange) {
+      currentInput.value = changeValue;
+    }
+
+    if (options.onChange) {
+      options.onChange(changeValue);
+    }
+    if (options.keyChange) {
+      options.keyChange(value);
+    }
+  }
+
+  /**
+   * @description 拼音转中文
+   * @param {string} value
+   */
+  function translate(value: string) {
+    const reg = new RegExp(`^${value}\\w*`);
+    const keys = Object.keys(pinYinNote)
+      .filter(key => reg.test(key))
+      .sort();
+    setResultVal({
+      code: value,
+      value: value
+        ? keys.length > 1
+          ? keys.reduce((a, b) => a + pinYinNote[b], '')
+          : pinYinNote[keys[0]]
+        : '',
+    });
+    if (options.keyChange) {
+      options.keyChange(value);
+    }
+  }
+
   return (
     <CSSTransition
       in={keyBoardVisible}
@@ -258,7 +336,13 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
             <Result />
             <div className="key-board-area">
               {/* 默认键盘 */}
-              {keyBoardMode === 'default' && <DefaultBoard />}
+              {keyBoardMode === 'default' && (
+                <DefaultBoard
+                  translate={translate}
+                  change={change}
+                  trigger={trigger}
+                />
+              )}
               {/* 手写键盘 */}
               {keyBoardMode === 'handwrite' && <HandBoard />}
             </div>
@@ -278,6 +362,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 
 // Specifies the default values for props:
 KeyBoard.defaultProps = {
+  autoChange: true,
   color: '#eaa050',
   modeList: ['handwrite', 'symbol'],
   blurHide: false,
