@@ -1,14 +1,20 @@
 import './default.less';
 import classNames from 'classnames';
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import KeyCodeButton from '../keyCodeButton';
-import useDeepCopy from '../../hooks/useDeepCopy';
 import {
   DEFAULT_CODE,
   NUMBER_CODE,
   SYMBOL_CODE,
 } from '../../constants/key_code';
 import { KeyBoardContext } from '../..';
+import useEventEmitter from '../../hooks/useEventEmitter';
 
 export interface IProps {
   change: (value: string) => void;
@@ -36,7 +42,8 @@ const defaultLineList: Record<'data' | 'type', string>[] = [
   },
 ];
 
-const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
+const DefaultBoard = (props: IProps, ref: React.MutableRefObject<any>) => {
+  const { translate, trigger, change } = props;
   const { modeList, handApi, closeKeyBoard } = useContext(KeyBoardContext);
   // 键盘列表
   const [lineList, setLineList] = useState([
@@ -53,12 +60,12 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
   // 是否显示数字键盘
   const [isNum, setNumberStatus] = useState(false);
   // 中英文模式
-  const [isCn, setLanStatus] = useState(false);
+  const [isCn, setLanStatus] = useState(true);
   // 上一次存的val值
   const [oldVal, setoldVal] = useState('');
 
   useEffect(() => {
-    setLine4(useDeepCopy(defaultLineList));
+    setLine4(JSON.parse(JSON.stringify(defaultLineList)));
 
     if (modeList.find(mode => mode === 'handwrite') && handApi) {
       setLine4(dataSource => {
@@ -69,7 +76,21 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
         return dataSource;
       });
     }
+
+    // 清空上一次储存的值
+    useEventEmitter.on('resultReset', () => {
+      setoldVal('');
+    });
   }, []);
+
+  // 暴露给父组件的子组件方法
+  useImperativeHandle(ref, () => {
+    return {
+      _keyButtonClick(parmas: Record<'data' | 'type', string>) {
+        keyButtonClick(parmas);
+      },
+    };
+  });
 
   /**
    * @description 按钮点击事件
@@ -94,21 +115,25 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
       //   语言
       case 'change2lang':
         {
-          setLanStatus(!isCn);
+          const status = !isCn;
+          setLanStatus(status);
           // 默认键盘状态下
           if (!isNum && !isSymbol) {
-            // this.$EventBus?.$emit('keyBoardChange', this.isCn ? 'CN' : 'EN');
+            useEventEmitter.emit('keyBoardChange', status ? 'CN' : 'EN');
           }
         }
         break;
       //  数字键盘
       case 'change2num':
         {
-          setNumberStatus(!isNum);
+          const status = !isNum;
+          setNumberStatus(status);
           setSymbolStatus(false);
-          if (isNum) {
-            // this.$EventBus?.$emit('keyBoardChange', 'number');
-            const numberCodeLine3List = useDeepCopy(NUMBER_CODE.line3);
+          if (status) {
+            useEventEmitter.emit('keyBoardChange', 'number');
+            const numberCodeLine3List = JSON.parse(
+              JSON.stringify(NUMBER_CODE.line3)
+            );
             if (!modeList.find(mode => mode === 'symbol')) {
               numberCodeLine3List.shift();
               numberCodeLine3List.unshift('+');
@@ -119,7 +144,7 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
               numberCodeLine3List,
             ]);
           } else {
-            // this.$EventBus?.$emit('keyBoardChange', this.isCn ? 'CN' : 'EN');
+            useEventEmitter.emit('keyBoardChange', isCn ? 'CN' : 'EN');
             setLineList([
               DEFAULT_CODE.line1,
               DEFAULT_CODE.line2,
@@ -131,16 +156,17 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
       // 切换符号显示
       case '#+=':
         {
+          const status = !isSymbol;
           setSymbolStatus(!isSymbol);
-          if (isSymbol) {
-            // this.$EventBus?.$emit('keyBoardChange', 'symbol');
+          if (status) {
+            useEventEmitter.emit('keyBoardChange', 'symbol');
             setLineList([
               SYMBOL_CODE.line1,
               SYMBOL_CODE.line2,
               SYMBOL_CODE.line3,
             ]);
           } else {
-            // this.$EventBus?.$emit('keyBoardChange', 'number');
+            useEventEmitter.emit('keyBoardChange', 'number');
             setLineList([
               NUMBER_CODE.line1,
               NUMBER_CODE.line2,
@@ -159,7 +185,7 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
             translate(oldVal);
           } else {
             if (type === 'handwrite') {
-              // this.$EventBus?.$emit('keyBoardChange', 'handwrite');
+              useEventEmitter.emit('keyBoardChange', 'handwrite');
             }
             trigger({
               data,
@@ -216,4 +242,4 @@ const DefaultBoard: React.FC<IProps> = ({ translate, trigger, change }) => {
   );
 };
 
-export default DefaultBoard;
+export default forwardRef(DefaultBoard);

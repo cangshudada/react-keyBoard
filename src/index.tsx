@@ -5,11 +5,11 @@ import Result from './components/result';
 import HandBoard from './components/handWrite';
 import DefaultBoard from './components/default';
 import { axiosConfig } from './helper/axiosConfig';
-import { pinYinNote } from './constants/pinyin_dict_note';
+import useEventEmitter from './hooks/useEventEmitter';
 import { CSSTransition } from 'react-transition-group';
+import { pinYinNote } from './constants/pinyin_dict_note';
 import DragHandle from './components/dragHandleBar/dragHandle';
-import React, { useState, useEffect, createContext } from 'react';
-
+import React, { useState, useEffect, createContext, useRef } from 'react';
 export interface IOptions {
   /** value auto change */
   autoChange?: boolean;
@@ -70,6 +70,9 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     code?: string;
     value?: string;
   }>({});
+
+  // 默认键盘的ref
+  const defaultRef = useRef<any>();
 
   // 键盘组件初始化准备
   useEffect(() => {
@@ -193,16 +196,23 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
    * @description 设置初始化键盘模式
    */
   function setDefaultKeyBoardMode(mode: string) {
+    useEventEmitter.emit('keyBoardChange', 'CN');
     switch (mode) {
       // 英文键盘
       case 'en':
         setKeyBoardShowMode('default');
-        // TODO
+        defaultRef.current._keyButtonClick({
+          data: '',
+          type: 'change2lang',
+        });
         break;
       // 数字键盘
       case 'number':
         setKeyBoardShowMode('default');
-        // TODO
+        defaultRef.current._keyButtonClick({
+          data: '.?123',
+          type: 'change2num',
+        });
         break;
       // 手写键盘
       case 'handwrite':
@@ -211,7 +221,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
           options.handApi
         ) {
           setKeyBoardShowMode('handwrite');
-          // TODO
+          useEventEmitter.emit('keyBoardChange', 'handwrite');
         } else {
           setKeyBoardShowMode('default');
         }
@@ -221,7 +231,14 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
         setKeyBoardShowMode('default');
         // 如果存在标点键盘才允许切换
         if (options.modeList?.find(mode => mode === 'symbol')) {
-          // TODO
+          defaultRef.current._keyButtonClick({
+            data: '.?123',
+            type: 'change2num',
+          });
+          defaultRef.current._keyButtonClick({
+            data: '#+=',
+            type: '#+=',
+          });
         }
         break;
       // 默认
@@ -338,6 +355,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
               {/* 默认键盘 */}
               {keyBoardMode === 'default' && (
                 <DefaultBoard
+                  ref={defaultRef}
                   translate={translate}
                   change={change}
                   trigger={trigger}
