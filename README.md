@@ -8,7 +8,7 @@
     Simple, Fast Key-Board.
 </h3>
 
-> ### keyBoard base on Vue2.x , support hand write.
+> ### keyBoard base on React , support hand write.
 
 <p align="center">  
   <img alt="gzip size" src="https://img.badgesize.io/https://raw.githubusercontent.com/cangshudada/vue-keyBoard/main/lib/keyboard.min.js?compression=gzip&style=flat-square">
@@ -38,7 +38,7 @@
 - 支持自定义主题色
 - 已集成丰富的中文字库
 - 支持急速识别的手写能力
-- vue 组件开箱即用
+- react 组件开箱即用
 
 
 
