@@ -1,8 +1,9 @@
+import { IDictionary } from '../';
 class EventEmitter {
   private listeners: IDictionary<
     undefined | null | ((...args: any[]) => void)[]
   >;
-  
+
   constructor() {
     this.listeners = {};
   }
@@ -31,7 +32,7 @@ class EventEmitter {
     }
   }
 
-  remove(type: string, cb: (...args: any[]) => void) {
+  remove(type: string, cb?: (...args: any[]) => void) {
     if (cb) {
       let cbs = this.listeners[type];
       if (!cbs) return;

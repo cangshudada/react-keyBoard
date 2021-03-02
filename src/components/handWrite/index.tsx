@@ -1,15 +1,19 @@
 import './handwrite.less';
-import { KeyBoardContext } from '../..';
 import KeyCodeButton from '../keyCodeButton';
 import HandPaintBoard from './handPaintBoard';
+import { KeyBoardContext, IKeyCode } from '../..';
 import React, { useState, useContext } from 'react';
 import useEventEmitter from '../../hooks/useEventEmitter';
 
-const HandBoard: React.FC = () => {
+export interface Iprops {
+  trigger?: (parmas: IKeyCode) => void;
+}
+
+const HandBoard: React.FC<Iprops> = props => {
   const { closeKeyBoard, changeDefaultBoard } = useContext(KeyBoardContext);
 
   // 手写板部分按钮列表
-  const handBoardOperList: Record<'data' | 'type', string>[] = [
+  const handBoardOperList: IKeyCode[] = [
     {
       data: '中/EN',
       type: 'change2lang',
@@ -56,7 +60,7 @@ const HandBoard: React.FC = () => {
                 case 'back':
                   {
                     changeDefaultBoard();
-                    useEventEmitter.emit('resultReset');
+                    useEventEmitter.emit('keyBoardChange', isCn && 'CN');
                   }
                   break;
                 //   语言
@@ -68,10 +72,11 @@ const HandBoard: React.FC = () => {
                 // 删除
                 case 'delete':
                   {
-                    useEventEmitter.emit('trigger', {
-                      data,
-                      type,
-                    });
+                    props?.trigger &&
+                      props?.trigger({
+                        data,
+                        type,
+                      });
                   }
                   break;
               }

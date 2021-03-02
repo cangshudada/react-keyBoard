@@ -2,7 +2,8 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './index.less';
-import KeyBoard from '../src/index';
+import "../dist/keyboard.min.css"
+import KeyBoard from '../dist';
 
 const App = () => {
   return (

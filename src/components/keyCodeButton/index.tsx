@@ -4,9 +4,9 @@ import BackIcon from '../../icons/back';
 import CloseIcon from '../../icons/close';
 import UpperIcon from '../../icons//upper';
 import DeleteIcon from '../../icons/delete';
-import { KeyBoardContext } from '../../index';
 import HandWriteIcon from '../../icons/handwrite';
 import React, { useState, useContext } from 'react';
+import { KeyBoardContext, IKeyCode } from '../../index';
 
 export interface IProps {
   type: string;
@@ -15,7 +15,7 @@ export interface IProps {
   isNum?: boolean;
   isUpper?: boolean;
   isSymbol?: boolean;
-  click?: (parmas: Record<'data' | 'type', string>) => void;
+  click?: (parmas: IKeyCode) => void;
 }
 
 const KeyCodeButton: React.FC<IProps> = props => {

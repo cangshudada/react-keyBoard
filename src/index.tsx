@@ -10,6 +10,17 @@ import { CSSTransition } from 'react-transition-group';
 import { pinYinNote } from './constants/pinyin_dict_note';
 import DragHandle from './components/dragHandleBar/dragHandle';
 import React, { useState, useEffect, createContext, useRef } from 'react';
+export interface IDictionary<T> {
+  [key: string]: T;
+}
+
+export type IKeyCode = Record<'data' | 'type', string>;
+
+export type IValue = {
+  code?: string;
+  value?: string;
+};
+
 export interface IOptions {
   /** value auto change */
   autoChange?: boolean;
@@ -25,6 +36,8 @@ export interface IOptions {
   handApi?: string;
   /** transition className */
   animateClass?: string;
+  /** transition time */
+  transitionTime?: number;
   /** darg Handle text */
   dargHandleText?: string;
   /** modal exist status */
@@ -45,12 +58,14 @@ export const KeyBoardContext = createContext<{
   color: string;
   modeList: ('handwrite' | 'symbol')[];
   handApi?: string;
+  transitionTime: number;
   closeKeyBoard: () => void;
   changeDefaultBoard: () => void;
 }>({
   color: '#eaa050',
   modeList: ['handwrite', 'symbol'],
   handApi: '',
+  transitionTime: 300,
   closeKeyBoard: () => {},
   changeDefaultBoard: () => {},
 });
@@ -66,10 +81,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
   // 键盘展示模式
   const [keyBoardMode, setKeyBoardShowMode] = useState<string>('default');
   // 中文模式下显示字符
-  const [resultVal, setResultVal] = useState<{
-    code?: string;
-    value?: string;
-  }>({});
+  const [resultVal, setResultVal] = useState<IValue>({});
 
   // 默认键盘的ref
   const defaultRef = useRef<any>();
@@ -79,6 +91,10 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     options.modal && addMoDal();
     // 注册键盘
     signUpKeyboard();
+
+    useEventEmitter.on('resultReset', () => {
+      setResultVal({});
+    });
 
     // destory hook
     return () => {
@@ -250,9 +266,9 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 
   /**
    * @description 模式切换
-   * @param {(Record<'data' | 'type', string>)} {type}
+   * @param {IKeyCode} {type}
    */
-  function trigger({ type }: Record<'data' | 'type', string>) {
+  function trigger({ type }: IKeyCode) {
     switch (type) {
       case 'handwrite':
         {
@@ -329,7 +345,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
     <CSSTransition
       in={keyBoardVisible}
       classNames={classNames('move-bottom-to-top' || options.animateClass)}
-      timeout={300}
+      timeout={options.transitionTime || 300}
       unmountOnExit
     >
       <KeyBoardContext.Provider
@@ -337,8 +353,14 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
           color: options.color || '#eaa050',
           modeList: options.modeList || ['handwrite', 'symbol'],
           handApi: options.handApi,
-          closeKeyBoard: () => {},
-          changeDefaultBoard: () => {},
+          transitionTime: options.transitionTime || 300,
+          closeKeyBoard: () => {
+            hideKeyBoard();
+          },
+          changeDefaultBoard: () => {
+            setKeyBoardShowMode('default');
+            useEventEmitter.emit('resultReset');
+          },
         }}
       >
         <div
@@ -350,7 +372,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
           {/* 键盘主体 */}
           <div className="key-board-container">
             {/* 结果展示 */}
-            <Result />
+            <Result resultVal={resultVal} change={change} />
             <div className="key-board-area">
               {/* 默认键盘 */}
               {keyBoardMode === 'default' && (
@@ -362,7 +384,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
                 />
               )}
               {/* 手写键盘 */}
-              {keyBoardMode === 'handwrite' && <HandBoard />}
+              {keyBoardMode === 'handwrite' && <HandBoard trigger={trigger} />}
             </div>
           </div>
           {/* 拖拽句柄 */}

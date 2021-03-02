@@ -6,7 +6,6 @@
     var flexibleEl = doc.querySelector('meta[name="flexible"]');
     var dpr = 0;
     var scale = 0;
-    var tid;
     var flexible = lib.flexible || (lib.flexible = {});
 
     if (metaEl) {
@@ -74,13 +73,11 @@
     }
 
     win.addEventListener('resize', function () {
-        clearTimeout(tid);
-        tid = setTimeout(refreshRem, 300);
+        refreshRem()
     }, false);
     win.addEventListener('pageshow', function (e) {
         if (e.persisted) {
-            clearTimeout(tid);
-            tid = setTimeout(refreshRem, 300);
+            refreshRem()
         }
     }, false);
 
