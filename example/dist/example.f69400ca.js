@@ -41324,32 +41324,27 @@ var App = function App() {
     className: "form-group"
   }, React.createElement("label", null, "\u9ED8\u8BA4"), React.createElement("input", {
     "data-mode": true,
-    className: "form-control",
-    "v-model": "value"
+    className: "form-control"
   })), React.createElement("div", {
     className: "form-group"
   }, React.createElement("label", null, "\u82F1\u6587\u952E\u76D8"), React.createElement("input", {
     "data-mode": "en",
-    className: "form-control",
-    "v-model": "value"
+    className: "form-control"
   })), React.createElement("div", {
     className: "form-group"
   }, React.createElement("label", null, "\u6570\u5B57\u952E\u76D8"), React.createElement("input", {
     "data-mode": "number",
-    className: "form-control",
-    "v-model": "value"
+    className: "form-control"
   })), React.createElement("div", {
     className: "form-group"
   }, React.createElement("label", null, "\u6807\u70B9\u952E\u76D8"), React.createElement("input", {
     "data-mode": "symbol",
-    className: "form-control",
-    "v-model": "value"
+    className: "form-control"
   })), React.createElement("div", {
     className: "form-group"
   }, React.createElement("label", null, "\u624B\u5199\u952E\u76D8"), React.createElement("input", {
     "data-mode": "handwrite",
-    className: "form-control",
-    "v-model": "value"
+    className: "form-control"
   }))), React.createElement(dist_1.default, {
     modal: true,
     handApi: "https://service.chaunve.com/HandWriteRecognizerService.asmx/Command",
@@ -41391,7 +41386,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63834" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64763" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,7 +1,7 @@
 import { KeyBoardContext } from '../..';
 import useEventEmitter from '../../hooks/useEventEmitter';
-import React, { useRef, useState, useEffect, useContext } from 'react';
 import { getWordFromHandWrite } from '../../serve';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 export interface IProps {
   lib: 'CN' | 'EN';
 }

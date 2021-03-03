@@ -3,13 +3,20 @@ import './assets/css/_BASE_.less';
 import classNames from 'classnames';
 import Result from './components/result';
 import HandBoard from './components/handWrite';
-import DefaultBoard from './components/default';
+import DefaultBoard, { IDefaultRef } from './components/default';
 import { axiosConfig } from './helper/axiosConfig';
 import useEventEmitter from './hooks/useEventEmitter';
 import { CSSTransition } from 'react-transition-group';
 import { pinYinNote } from './constants/pinyin_dict_note';
 import DragHandle from './components/dragHandleBar/dragHandle';
-import React, { useState, useEffect, createContext, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 export interface IDictionary<T> {
   [key: string]: T;
 }
@@ -21,7 +28,7 @@ export type IValue = {
   value?: string;
 };
 
-export interface IOptions {
+export interface IKeyBoard {
   /** value auto change */
   autoChange?: boolean;
   /** theme color - support rgb or hex - default("#eaa050") */
@@ -53,6 +60,10 @@ export interface IOptions {
   /** keyboard modal click hook */
   modalClick?: () => void;
 }
+export interface IKeyBoardRef {
+  /** keyboard reSign up */
+  reSignUp: () => void;
+}
 
 export const KeyBoardContext = createContext<{
   color: string;
@@ -75,7 +86,7 @@ let inputList: HTMLInputElement[] = [];
 // 当前触发的input
 let currentInput: HTMLInputElement | null = null;
 
-const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
+const KeyBoard = (options: IKeyBoard, ref: any) => {
   // 键盘显隐控制
   const [keyBoardVisible, setKeyBoardVisible] = useState<boolean>(false);
   // 键盘展示模式
@@ -84,7 +95,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
   const [resultVal, setResultVal] = useState<IValue>({});
 
   // 默认键盘的ref
-  const defaultRef = useRef<any>();
+  const defaultRef = useRef<IDefaultRef>();
 
   // 键盘组件初始化准备
   useEffect(() => {
@@ -107,6 +118,16 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
       });
     };
   }, []);
+
+  // 暴露给父组件的子组件方法
+  useImperativeHandle(ref, () => {
+    return {
+      // 重新给键盘注册输入框
+      reSignUp() {
+        signUpKeyboard();
+      },
+    };
+  });
 
   /**
    * @description 新增modal
@@ -217,7 +238,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
       // 英文键盘
       case 'en':
         setKeyBoardShowMode('default');
-        defaultRef.current._keyButtonClick({
+        defaultRef.current?.keyButtonTrigger({
           data: '',
           type: 'change2lang',
         });
@@ -225,7 +246,7 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
       // 数字键盘
       case 'number':
         setKeyBoardShowMode('default');
-        defaultRef.current._keyButtonClick({
+        defaultRef.current?.keyButtonTrigger({
           data: '.?123',
           type: 'change2num',
         });
@@ -247,11 +268,11 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
         setKeyBoardShowMode('default');
         // 如果存在标点键盘才允许切换
         if (options.modeList?.find(mode => mode === 'symbol')) {
-          defaultRef.current._keyButtonClick({
+          defaultRef.current?.keyButtonTrigger({
             data: '.?123',
             type: 'change2num',
           });
-          defaultRef.current._keyButtonClick({
+          defaultRef.current?.keyButtonTrigger({
             data: '#+=',
             type: '#+=',
           });
@@ -401,14 +422,14 @@ const KeyBoard: React.FC<IOptions> = (options: IOptions) => {
 };
 
 // Specifies the default values for props:
-KeyBoard.defaultProps = {
-  autoChange: true,
-  color: '#eaa050',
-  modeList: ['handwrite', 'symbol'],
-  blurHide: false,
-  showHandleBar: true,
-  closeOnClickModal: true,
-  dargHandleText: '将键盘拖到您喜欢的位置',
-};
+// KeyBoard.defaultProps = {
+//   autoChange: true,
+//   color: '#eaa050',
+//   modeList: ['handwrite', 'symbol'],
+//   blurHide: false,
+//   showHandleBar: true,
+//   closeOnClickModal: true,
+//   dargHandleText: '将键盘拖到您喜欢的位置',
+// };
 
-export default KeyBoard;
+export default forwardRef(KeyBoard);
