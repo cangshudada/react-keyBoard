@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://www.cmappax.com/">
+  <a href="https://www.cmappax.com/keyboard/react">
     <img width="500" src="https://www.cmappax.com/editorResource/keyboard/keyboard.svg" alt="Logo">
   </a>
 </p>
