@@ -87,6 +87,18 @@ let inputList: HTMLInputElement[] = [];
 let currentInput: HTMLInputElement | null = null;
 
 const KeyBoard = (options: IKeyBoard, ref: any) => {
+  // Specifies the default values for props:
+  options = {
+    ...options,
+    autoChange: options.autoChange || true,
+    color: options.color || '#eaa050',
+    modeList: options.modeList || ['handwrite', 'symbol'],
+    blurHide: options.blurHide || false,
+    showHandleBar: options.showHandleBar || true,
+    closeOnClickModal: options.closeOnClickModal || true,
+    dargHandleText: options.dargHandleText || '将键盘拖到您喜欢的位置',
+  };
+
   // 键盘显隐控制
   const [keyBoardVisible, setKeyBoardVisible] = useState<boolean>(false);
   // 键盘展示模式
@@ -421,15 +433,4 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
   );
 };
 
-// Specifies the default values for props:
-// KeyBoard.defaultProps = {
-//   autoChange: true,
-//   color: '#eaa050',
-//   modeList: ['handwrite', 'symbol'],
-//   blurHide: false,
-//   showHandleBar: true,
-//   closeOnClickModal: true,
-//   dargHandleText: '将键盘拖到您喜欢的位置',
-// };
-
-export default forwardRef(KeyBoard);
+export default forwardRef<any, IKeyBoard>(KeyBoard);

@@ -22,6 +22,7 @@ module.exports = {
         extract: 'keyboard.min.css',
       })
     );
+    config.output.sourcemap = false;
     return config;
   },
 };
