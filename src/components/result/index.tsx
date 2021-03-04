@@ -1,14 +1,14 @@
 import './result.less';
 import { groupSplitArray } from '../../utils';
-import { KeyBoardContext,IValue } from '../..';
+import { KeyBoardContext, IValue } from '../..';
 import useEventEmitter from '../../hooks/useEventEmitter';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { memo, useContext, useState, useEffect } from 'react';
 export interface IProps {
   resultVal: IValue;
   change?: (word: string) => void;
 }
 
-const Result: React.FC<IProps> = ({ resultVal, change }) => {
+const Result: React.FC<IProps> = memo(({ resultVal, change }) => {
   const { color } = useContext(KeyBoardContext);
   const [status, setStatus] = useState('');
   const [valueList, setValueList] = useState<string[]>([]);
@@ -38,9 +38,9 @@ const Result: React.FC<IProps> = ({ resultVal, change }) => {
     });
 
     return () => {
-      useEventEmitter.remove("keyBoardChange")
-      useEventEmitter.remove("getWordsFromServer")
-    }
+      useEventEmitter.remove('keyBoardChange');
+      useEventEmitter.remove('getWordsFromServer');
+    };
   }, []);
 
   // 监听传入值的变化
@@ -114,6 +114,6 @@ const Result: React.FC<IProps> = ({ resultVal, change }) => {
   ) : (
     <div></div>
   );
-};
+});
 
 export default Result;

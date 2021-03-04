@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React__default, { createElement, useState, useContext, useRef, useEffect, forwardRef, useImperativeHandle, createContext } from 'react';
+import React__default, { createElement, memo, useState, useContext, useRef, useEffect, forwardRef, useImperativeHandle, createContext } from 'react';
 import axios from 'axios';
 import { CSSTransition } from 'react-transition-group';
 
@@ -56,128 +56,6 @@ function _extends() {
 
   return _extends.apply(this, arguments);
 }
-
-(function (win, lib) {
-  var doc = win.document;
-  var docEl = doc.documentElement;
-  var metaEl = /*#__PURE__*/doc.querySelector('meta[name="viewport"]');
-  var flexibleEl = /*#__PURE__*/doc.querySelector('meta[name="flexible"]');
-  var dpr = 0;
-  var scale = 0;
-  var flexible = lib.flexible || (lib.flexible = {});
-
-  if (metaEl) {
-    console.warn('将根据已有的meta标签来设置缩放比例');
-    var match = /*#__PURE__*/metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
-
-    if (match) {
-      scale = /*#__PURE__*/parseFloat(match[1]);
-      dpr = /*#__PURE__*/parseInt(1 / scale);
-    }
-  } else if (flexibleEl) {
-    var content = /*#__PURE__*/flexibleEl.getAttribute('content');
-
-    if (content) {
-      var initialDpr = /*#__PURE__*/content.match(/initial\-dpr=([\d\.]+)/);
-      var maximumDpr = /*#__PURE__*/content.match(/maximum\-dpr=([\d\.]+)/);
-
-      if (initialDpr) {
-        dpr = /*#__PURE__*/parseFloat(initialDpr[1]);
-        scale = /*#__PURE__*/parseFloat( /*#__PURE__*/(1 / dpr).toFixed(2));
-      }
-
-      if (maximumDpr) {
-        dpr = /*#__PURE__*/parseFloat(maximumDpr[1]);
-        scale = /*#__PURE__*/parseFloat( /*#__PURE__*/(1 / dpr).toFixed(2));
-      }
-    }
-  }
-
-  if (!dpr && !scale) {
-    var isIPhone = /*#__PURE__*/win.navigator.appVersion.match(/iphone/gi);
-    var devicePixelRatio = win.devicePixelRatio;
-
-    if (isIPhone) {
-      // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
-      if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {
-        dpr = 3;
-      } else if (devicePixelRatio >= 2 && (!dpr || dpr >= 2)) {
-        dpr = 2;
-      } else {
-        dpr = 1;
-      }
-    } else {
-      // 其他设备下，仍旧使用1倍的方案
-      dpr = 1;
-    }
-
-    scale = 1 / dpr;
-  }
-
-  docEl.setAttribute('data-dpr', dpr);
-
-  if (!metaEl) {
-    metaEl = /*#__PURE__*/doc.createElement('meta');
-    metaEl.setAttribute('name', 'viewport');
-    metaEl.setAttribute('content', 'initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
-
-    if (docEl.firstElementChild) {
-      docEl.firstElementChild.appendChild(metaEl);
-    } else {
-      var wrap = /*#__PURE__*/doc.createElement('div');
-      wrap.appendChild(metaEl);
-      doc.write(wrap.innerHTML);
-    }
-  }
-
-  function refreshRem() {
-    var width = docEl.getBoundingClientRect().width;
-    var rem = width / 10;
-    docEl.style.fontSize = rem + 'px';
-    flexible.rem = win.rem = rem;
-  }
-
-  win.addEventListener('resize', function () {
-    refreshRem();
-  }, false);
-  win.addEventListener('pageshow', function (e) {
-    if (e.persisted) {
-      refreshRem();
-    }
-  }, false);
-
-  if (doc.readyState === 'complete') {
-    doc.body.style.fontSize = 10 * dpr + 'px';
-  } else {
-    doc.addEventListener('DOMContentLoaded', function (e) {
-      doc.body.style.fontSize = 10 * dpr + 'px';
-    }, false);
-  }
-
-  refreshRem();
-  flexible.dpr = win.dpr = dpr;
-  flexible.refreshRem = refreshRem;
-
-  flexible.rem2px = function (d) {
-    var val = parseFloat(d) * this.rem;
-
-    if (typeof d === 'string' && d.match(/rem$/)) {
-      val += 'px';
-    }
-
-    return val;
-  };
-
-  flexible.px2rem = function (d) {
-    var val = parseFloat(d) / this.rem;
-
-    if (typeof d === 'string' && d.match(/px$/)) {
-      val += 'rem';
-    }
-
-    return val;
-  };
-})(window, window['lib'] || (window['lib'] = {}));
 
 /**
  * @description 按特定长度切割数组
@@ -331,18 +209,19 @@ function SvgHandwrite(props) {
   })));
 }
 
-var KeyCodeButton = function KeyCodeButton(props) {
+var KeyCodeButton = /*#__PURE__*/memo(function (props) {
   var _useState = useState(false),
       isHover = _useState[0],
       setHoverStatus = _useState[1];
 
   var _useContext = useContext(KeyBoardContext),
       color = _useContext.color;
+
+  console.log('color :>> ', color);
   /**
    * @description 获取样式
    * @returns {React.CSSProperties}
    */
-
 
   function getStyle() {
     if (props.isUpper && props.type === 'upper' || props.isNum && props.type === 'change2num' || props.isSymbol && props.type === '#+=' || isHover) {
@@ -415,7 +294,7 @@ var KeyCodeButton = function KeyCodeButton(props) {
   React__default.createElement("span", {
     dangerouslySetInnerHTML: getCode()
   }));
-};
+});
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -1288,8 +1167,7 @@ clickC = []; // 轨迹标志位，为1则是终点
 // 定时器id
 
 var timer = undefined;
-
-var HandBoard = function HandBoard(props) {
+var HandBoard = /*#__PURE__*/memo(function (props) {
   // canvas dom
   var canvas = useRef(null);
 
@@ -1525,9 +1403,9 @@ var HandBoard = function HandBoard(props) {
     onMouseUp: mouseup,
     onMouseLeave: mouseup
   }));
-};
+});
 
-var HandBoard$1 = function HandBoard$1(props) {
+var HandBoard$1 = /*#__PURE__*/memo(function (props) {
   var _useContext = useContext(KeyBoardContext),
       closeKeyBoard = _useContext.closeKeyBoard,
       changeDefaultBoard = _useContext.changeDefaultBoard; // 手写板部分按钮列表
@@ -1604,261 +1482,7 @@ var HandBoard$1 = function HandBoard$1(props) {
       }
     });
   })));
-};
-
-// 符号键盘字符
-var SYMBOL_CODE = {
-  line1: ['[', ']', '{', '}', '+', '-', '*', '/', '%', '='],
-  line2: ['_', '—', '|', '~', '^', '《', '》', '$', '&'],
-  line3: ['#+=', '……', ',', '?', '!', '.', '’', '\'', "delete"]
-}; // 默认键盘字符
-
-var DEFAULT_CODE = {
-  line1: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-  line2: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-  line3: ['upper', 'z', 'x', 'c', 'v', 'b', 'n', 'm', "delete"]
-}; // 数字键盘字符
-
-var NUMBER_CODE = {
-  line1: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-  line2: ['-', '/', ':', '(', ')', '¥', '@', '“', '”'],
-  line3: ['#+=', '。', '，', '、', '？', '！', '.', ';', "delete"]
-};
-
-var defaultLineList = [{
-  data: '.?123',
-  type: 'change2num'
-}, {
-  data: '',
-  type: 'change2lang'
-}, {
-  data: ' ',
-  type: 'space'
-}, {
-  data: '',
-  type: 'close'
-}]; // 上一次存的val值
-
-var oldVal = '';
-
-var DefaultBoard = function DefaultBoard(props, ref) {
-  var translate = props.translate,
-      trigger = props.trigger,
-      change = props.change;
-
-  var _useContext = useContext(KeyBoardContext),
-      modeList = _useContext.modeList,
-      handApi = _useContext.handApi,
-      closeKeyBoard = _useContext.closeKeyBoard; // 键盘列表
-
-
-  var _useState = useState([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]),
-      lineList = _useState[0],
-      setLineList = _useState[1]; // 第四行变动的键码
-
-
-  var _useState2 = useState([]),
-      line4 = _useState2[0],
-      setLine4 = _useState2[1]; // 大小写
-
-
-  var _useState3 = useState(false),
-      isUpper = _useState3[0],
-      setUpperStatus = _useState3[1]; // 是否显示符号键盘
-
-
-  var _useState4 = useState(false),
-      isSymbol = _useState4[0],
-      setSymbolStatus = _useState4[1]; // 是否显示数字键盘
-
-
-  var _useState5 = useState(false),
-      isNum = _useState5[0],
-      setNumberStatus = _useState5[1]; // 中英文模式
-
-
-  var _useState6 = useState(true),
-      isCn = _useState6[0],
-      setLanStatus = _useState6[1];
-
-  useEffect(function () {
-    setLine4(JSON.parse(JSON.stringify(defaultLineList))); // 判定是否存在手写
-
-    if (modeList.find(function (mode) {
-      return mode === 'handwrite';
-    }) && handApi) {
-      setLine4(function (dataSource) {
-        dataSource.splice(2, 0, {
-          data: '',
-          type: 'handwrite'
-        });
-        return dataSource;
-      });
-    } // 清空上一次储存的值
-
-
-    useEventEmitter.on('resultReset', function () {
-      oldVal = '';
-    });
-  }, []); // 暴露给父组件的子组件方法
-
-  useImperativeHandle(ref, function () {
-    return {
-      keyButtonTrigger: function keyButtonTrigger(parmas) {
-        keyButtonClick(parmas);
-      }
-    };
-  });
-  /**
-   * @description 按钮点击事件
-   * @param {IKeyCode} { data, type }
-   */
-
-  function keyButtonClick(_ref) {
-    var data = _ref.data,
-        type = _ref.type;
-
-    switch (type) {
-      //  关闭
-      case 'close':
-        {
-          oldVal = '';
-          closeKeyBoard();
-        }
-        break;
-      //  大小写
-
-      case 'upper':
-        {
-          oldVal = '';
-          setUpperStatus(!isUpper);
-        }
-        break;
-      //   语言
-
-      case 'change2lang':
-        {
-          var status = !isCn;
-          setLanStatus(status); // 默认键盘状态下
-
-          if (!isNum && !isSymbol) {
-            useEventEmitter.emit('keyBoardChange', status ? 'CN' : 'EN');
-          }
-        }
-        break;
-      //  数字键盘
-
-      case 'change2num':
-        {
-          var _status = !isNum;
-
-          setNumberStatus(_status);
-          setSymbolStatus(false);
-
-          if (_status) {
-            useEventEmitter.emit('keyBoardChange', 'number');
-            var numberCodeLine3List = JSON.parse(JSON.stringify(NUMBER_CODE.line3));
-
-            if (!modeList.find(function (mode) {
-              return mode === 'symbol';
-            })) {
-              numberCodeLine3List.shift();
-              numberCodeLine3List.unshift('+');
-            }
-
-            setLineList([NUMBER_CODE.line1, NUMBER_CODE.line2, numberCodeLine3List]);
-          } else {
-            useEventEmitter.emit('keyBoardChange', isCn ? 'CN' : 'EN');
-            setLineList([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]);
-          }
-        }
-        break;
-      // 切换符号显示
-
-      case '#+=':
-        {
-          var _status2 = !isSymbol;
-
-          setSymbolStatus(!isSymbol);
-
-          if (_status2) {
-            useEventEmitter.emit('keyBoardChange', 'symbol');
-            setLineList([SYMBOL_CODE.line1, SYMBOL_CODE.line2, SYMBOL_CODE.line3]);
-          } else {
-            useEventEmitter.emit('keyBoardChange', 'number');
-            setLineList([NUMBER_CODE.line1, NUMBER_CODE.line2, NUMBER_CODE.line3]);
-          }
-        }
-        break;
-      // 切换手写板以及删除
-
-      case 'handwrite':
-      case 'delete':
-        {
-          // 如果是中文模式只删存好的字段
-          if (isCn && type === 'delete' && oldVal) {
-            oldVal = oldVal.substr(0, oldVal.length - 1);
-            translate(oldVal);
-          } else {
-            if (type === 'handwrite') {
-              useEventEmitter.emit('keyBoardChange', 'handwrite');
-            }
-
-            trigger({
-              data: data,
-              type: type
-            });
-          }
-        }
-        break;
-      // 默认
-
-      default:
-        {
-          // 中文需要转
-          if (isCn && !isNum && !isSymbol) {
-            translate(oldVal + data);
-            oldVal = oldVal + data;
-          } else {
-            // 英文直接输出
-            change(data);
-          }
-        }
-        break;
-    }
-  }
-
-  return React__default.createElement("div", {
-    className: "default-key-board"
-  }, lineList.map(function (line, index) {
-    return React__default.createElement("div", {
-      className: classNames('line', "line" + (index + 1)),
-      key: index
-    }, line.map(function (key) {
-      return React__default.createElement(KeyCodeButton, {
-        isUpper: isUpper,
-        key: key,
-        type: key,
-        data: key,
-        isSymbol: isSymbol,
-        click: keyButtonClick
-      });
-    }));
-  }), React__default.createElement("div", {
-    className: "line line4"
-  }, line4.map(function (key, index) {
-    return React__default.createElement(KeyCodeButton, {
-      key: index,
-      type: key.type,
-      data: key.data,
-      isCn: isCn,
-      isNum: isNum,
-      click: keyButtonClick
-    });
-  })));
-};
-
-var DefaultBoard$1 = /*#__PURE__*/forwardRef(DefaultBoard);
+});
 
 var TIMEOUT = 15000;
 /**
@@ -2384,7 +2008,7 @@ function handleDragEvent(target) {
   };
 }
 
-var DragHandle = function DragHandle(props) {
+var DragHandle = /*#__PURE__*/memo(function (props) {
   useEffect(function () {
     // 执行拖拽事件
     if (document.querySelector('.key-board-drag-handle')) {
@@ -2402,18 +2026,272 @@ var DragHandle = function DragHandle(props) {
     fill: "none",
     stroke: props.color
   }));
+});
+
+// 符号键盘字符
+var SYMBOL_CODE = {
+  line1: ['[', ']', '{', '}', '+', '-', '*', '/', '%', '='],
+  line2: ['_', '—', '|', '~', '^', '《', '》', '$', '&'],
+  line3: ['#+=', '……', ',', '?', '!', '.', '’', '\'', "delete"]
+}; // 默认键盘字符
+
+var DEFAULT_CODE = {
+  line1: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+  line2: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+  line3: ['upper', 'z', 'x', 'c', 'v', 'b', 'n', 'm', "delete"]
+}; // 数字键盘字符
+
+var NUMBER_CODE = {
+  line1: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+  line2: ['-', '/', ':', '(', ')', '¥', '@', '“', '”'],
+  line3: ['#+=', '。', '，', '、', '？', '！', '.', ';', "delete"]
 };
 
+var defaultLineList = [{
+  data: '.?123',
+  type: 'change2num'
+}, {
+  data: '',
+  type: 'change2lang'
+}, {
+  data: ' ',
+  type: 'space'
+}, {
+  data: '',
+  type: 'close'
+}]; // 上一次存的val值
+
+var oldVal = '';
+
+var DefaultBoard = function DefaultBoard(props, ref) {
+  var translate = props.translate,
+      trigger = props.trigger,
+      change = props.change;
+
+  var _useContext = useContext(KeyBoardContext),
+      modeList = _useContext.modeList,
+      handApi = _useContext.handApi,
+      closeKeyBoard = _useContext.closeKeyBoard; // 键盘列表
+
+
+  var _useState = useState([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]),
+      lineList = _useState[0],
+      setLineList = _useState[1]; // 第四行变动的键码
+
+
+  var _useState2 = useState([]),
+      line4 = _useState2[0],
+      setLine4 = _useState2[1]; // 大小写
+
+
+  var _useState3 = useState(false),
+      isUpper = _useState3[0],
+      setUpperStatus = _useState3[1]; // 是否显示符号键盘
+
+
+  var _useState4 = useState(false),
+      isSymbol = _useState4[0],
+      setSymbolStatus = _useState4[1]; // 是否显示数字键盘
+
+
+  var _useState5 = useState(false),
+      isNum = _useState5[0],
+      setNumberStatus = _useState5[1]; // 中英文模式
+
+
+  var _useState6 = useState(true),
+      isCn = _useState6[0],
+      setLanStatus = _useState6[1];
+
+  useEffect(function () {
+    setLine4(JSON.parse(JSON.stringify(defaultLineList))); // 判定是否存在手写
+
+    if (modeList.find(function (mode) {
+      return mode === 'handwrite';
+    }) && handApi) {
+      setLine4(function (dataSource) {
+        dataSource.splice(2, 0, {
+          data: '',
+          type: 'handwrite'
+        });
+        return dataSource;
+      });
+    } // 清空上一次储存的值
+
+
+    useEventEmitter.on('resultReset', function () {
+      oldVal = '';
+    });
+  }, []); // 暴露给父组件的子组件方法
+
+  useImperativeHandle(ref, function () {
+    return {
+      keyButtonTrigger: function keyButtonTrigger(parmas) {
+        keyButtonClick(parmas);
+      }
+    };
+  });
+  /**
+   * @description 按钮点击事件
+   * @param {IKeyCode} { data, type }
+   */
+
+  function keyButtonClick(_ref) {
+    var data = _ref.data,
+        type = _ref.type;
+
+    switch (type) {
+      //  关闭
+      case 'close':
+        {
+          oldVal = '';
+          closeKeyBoard();
+        }
+        break;
+      //  大小写
+
+      case 'upper':
+        {
+          oldVal = '';
+          setUpperStatus(!isUpper);
+        }
+        break;
+      //   语言
+
+      case 'change2lang':
+        {
+          var status = !isCn;
+          setLanStatus(status); // 默认键盘状态下
+
+          if (!isNum && !isSymbol) {
+            useEventEmitter.emit('keyBoardChange', status ? 'CN' : 'EN');
+          }
+        }
+        break;
+      //  数字键盘
+
+      case 'change2num':
+        {
+          var _status = !isNum;
+
+          setNumberStatus(_status);
+          setSymbolStatus(false);
+
+          if (_status) {
+            useEventEmitter.emit('keyBoardChange', 'number');
+            var numberCodeLine3List = JSON.parse(JSON.stringify(NUMBER_CODE.line3));
+
+            if (!modeList.find(function (mode) {
+              return mode === 'symbol';
+            })) {
+              numberCodeLine3List.shift();
+              numberCodeLine3List.unshift('+');
+            }
+
+            setLineList([NUMBER_CODE.line1, NUMBER_CODE.line2, numberCodeLine3List]);
+          } else {
+            useEventEmitter.emit('keyBoardChange', isCn ? 'CN' : 'EN');
+            setLineList([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]);
+          }
+        }
+        break;
+      // 切换符号显示
+
+      case '#+=':
+        {
+          var _status2 = !isSymbol;
+
+          setSymbolStatus(!isSymbol);
+
+          if (_status2) {
+            useEventEmitter.emit('keyBoardChange', 'symbol');
+            setLineList([SYMBOL_CODE.line1, SYMBOL_CODE.line2, SYMBOL_CODE.line3]);
+          } else {
+            useEventEmitter.emit('keyBoardChange', 'number');
+            setLineList([NUMBER_CODE.line1, NUMBER_CODE.line2, NUMBER_CODE.line3]);
+          }
+        }
+        break;
+      // 切换手写板以及删除
+
+      case 'handwrite':
+      case 'delete':
+        {
+          // 如果是中文模式只删存好的字段
+          if (isCn && type === 'delete' && oldVal) {
+            oldVal = oldVal.substr(0, oldVal.length - 1);
+            translate(oldVal);
+          } else {
+            if (type === 'handwrite') {
+              useEventEmitter.emit('keyBoardChange', 'handwrite');
+            }
+
+            trigger({
+              data: data,
+              type: type
+            });
+          }
+        }
+        break;
+      // 默认
+
+      default:
+        {
+          // 中文需要转
+          if (isCn && !isNum && !isSymbol) {
+            translate(oldVal + data);
+            oldVal = oldVal + data;
+          } else {
+            // 英文直接输出
+            change(data);
+          }
+        }
+        break;
+    }
+  }
+
+  return React__default.createElement("div", {
+    className: "default-key-board"
+  }, lineList.map(function (line, index) {
+    return React__default.createElement("div", {
+      className: classNames('line', "line" + (index + 1)),
+      key: index
+    }, line.map(function (key) {
+      return React__default.createElement(KeyCodeButton, {
+        isUpper: isUpper,
+        key: key,
+        type: key,
+        data: key,
+        isSymbol: isSymbol,
+        click: keyButtonClick
+      });
+    }));
+  }), React__default.createElement("div", {
+    className: "line line4"
+  }, line4.map(function (key, index) {
+    return React__default.createElement(KeyCodeButton, {
+      key: index,
+      type: key.type,
+      data: key.data,
+      isCn: isCn,
+      isNum: isNum,
+      click: keyButtonClick
+    });
+  })));
+};
+
+var DefaultBoard$1 = /*#__PURE__*/forwardRef(DefaultBoard);
+
 var KeyBoardContext = /*#__PURE__*/createContext({
-  color: '#eaa050',
-  modeList: ['handwrite', 'symbol'],
+  color: '',
+  modeList: [],
   handApi: '',
-  transitionTime: 300,
+  transitionTime: 0,
   closeKeyBoard: function closeKeyBoard() {},
   changeDefaultBoard: function changeDefaultBoard() {}
 }); // 注册键盘绑定的input列表
 
-var Result = function Result(_ref) {
+var Result = /*#__PURE__*/memo(function (_ref) {
   var resultVal = _ref.resultVal,
       change = _ref.change;
 
@@ -2455,8 +2333,8 @@ var Result = function Result(_ref) {
       setShowList(groupSplitArray(_valueList, 11));
     });
     return function () {
-      useEventEmitter.remove("keyBoardChange");
-      useEventEmitter.remove("getWordsFromServer");
+      useEventEmitter.remove('keyBoardChange');
+      useEventEmitter.remove('getWordsFromServer');
     };
   }, []); // 监听传入值的变化
 
@@ -2523,13 +2401,13 @@ var Result = function Result(_ref) {
       setShowIndex(showIndex + 1);
     }
   })))) : React__default.createElement("div", null);
-};
+});
 
 var KeyBoardContext$1 = /*#__PURE__*/createContext({
-  color: '#eaa050',
-  modeList: ['handwrite', 'symbol'],
+  color: '',
+  modeList: [],
   handApi: '',
-  transitionTime: 300,
+  transitionTime: 0,
   closeKeyBoard: function closeKeyBoard() {},
   changeDefaultBoard: function changeDefaultBoard() {}
 }); // 注册键盘绑定的input列表
@@ -2538,18 +2416,33 @@ var inputList = []; // 当前触发的input
 
 var currentInput = null;
 
-var KeyBoard = function KeyBoard(options, ref) {
-  // Specifies the default values for props:
-  options = _extends({}, options, {
-    autoChange: options.autoChange || true,
-    color: options.color || '#eaa050',
-    modeList: options.modeList || ['handwrite', 'symbol'],
-    blurHide: options.blurHide || false,
-    showHandleBar: options.showHandleBar || true,
-    closeOnClickModal: options.closeOnClickModal || true,
-    dargHandleText: options.dargHandleText || '将键盘拖到您喜欢的位置'
-  }); // 键盘显隐控制
+var KeyBoard = function KeyBoard(_ref, ref) {
+  var _ref$autoChange = _ref.autoChange,
+      autoChange = _ref$autoChange === void 0 ? true : _ref$autoChange,
+      _ref$color = _ref.color,
+      color = _ref$color === void 0 ? '#eaa050' : _ref$color,
+      _ref$modeList = _ref.modeList,
+      modeList = _ref$modeList === void 0 ? ['handwrite', 'symbol'] : _ref$modeList,
+      _ref$blurHide = _ref.blurHide,
+      blurHide = _ref$blurHide === void 0 ? true : _ref$blurHide,
+      _ref$showHandleBar = _ref.showHandleBar,
+      showHandleBar = _ref$showHandleBar === void 0 ? true : _ref$showHandleBar,
+      _ref$closeOnClickModa = _ref.closeOnClickModal,
+      closeOnClickModal = _ref$closeOnClickModa === void 0 ? true : _ref$closeOnClickModa,
+      _ref$dargHandleText = _ref.dargHandleText,
+      dargHandleText = _ref$dargHandleText === void 0 ? '将键盘拖到您喜欢的位置' : _ref$dargHandleText,
+      _ref$animateClass = _ref.animateClass,
+      animateClass = _ref$animateClass === void 0 ? 'move-bottom-to-top' : _ref$animateClass,
+      _ref$transitionTime = _ref.transitionTime,
+      transitionTime = _ref$transitionTime === void 0 ? 300 : _ref$transitionTime,
+      handApi = _ref.handApi,
+      modal = _ref.modal,
+      keyChange = _ref.keyChange,
+      onChange = _ref.onChange,
+      closed = _ref.closed,
+      modalClick = _ref.modalClick;
 
+  // 键盘显隐控制
   var _useState = useState(false),
       keyBoardVisible = _useState[0],
       setKeyBoardVisible = _useState[1]; // 键盘展示模式
@@ -2565,10 +2458,22 @@ var KeyBoard = function KeyBoard(options, ref) {
       setResultVal = _useState3[1]; // 默认键盘的ref
 
 
-  var defaultRef = useRef(); // 键盘组件初始化准备
+  var defaultRef = useRef(); // provide value
+
+  var _useState4 = useState({
+    color: '',
+    modeList: [],
+    handApi: '',
+    transitionTime: 0,
+    closeKeyBoard: function closeKeyBoard() {},
+    changeDefaultBoard: function changeDefaultBoard() {}
+  }),
+      provideValue = _useState4[0],
+      setProvideValue = _useState4[1]; // 键盘组件初始化准备
+
 
   useEffect(function () {
-    options.modal && addMoDal(); // 注册键盘
+    modal && addMoDal(); // 注册键盘
 
     signUpKeyboard();
     useEventEmitter.on('resultReset', function () {
@@ -2578,13 +2483,23 @@ var KeyBoard = function KeyBoard(options, ref) {
     return function () {
       var _document$querySelect;
 
-      (_document$querySelect = document.querySelector('.key-board-modal')) == null ? void 0 : _document$querySelect.removeEventListener('click', modalClick);
+      (_document$querySelect = document.querySelector('.key-board-modal')) == null ? void 0 : _document$querySelect.removeEventListener('click', modalTrigger);
       inputList.forEach(function (input) {
         input.removeEventListener('focus', showKeyBoard);
         input.removeEventListener('blur', hideKeyBoard);
       });
     };
-  }, []); // 暴露给父组件的子组件方法
+  }, []); // props 变化
+
+  useEffect(function () {
+    setProvideValue(function (datasource) {
+      return _extends({}, datasource, {
+        color: color,
+        handApi: handApi,
+        transitionTime: transitionTime
+      });
+    });
+  }, [color, handApi, transitionTime]); // 暴露给父组件的子组件方法
 
   useImperativeHandle(ref, function () {
     return {
@@ -2605,7 +2520,7 @@ var KeyBoard = function KeyBoard(options, ref) {
     if (document.querySelector('.key-board-modal')) {
       var _document$querySelect2;
 
-      (_document$querySelect2 = document.querySelector('.key-board-modal')) == null ? void 0 : _document$querySelect2.addEventListener('click', modalClick);
+      (_document$querySelect2 = document.querySelector('.key-board-modal')) == null ? void 0 : _document$querySelect2.addEventListener('click', modalTrigger);
       return;
     } // 如果不存在modal则创建一个modal遮罩层
 
@@ -2614,19 +2529,19 @@ var KeyBoard = function KeyBoard(options, ref) {
     modalDom.className = 'key-board-modal';
     modalDom.style.display = 'none';
     (_document$querySelect3 = document.querySelector('body')) == null ? void 0 : _document$querySelect3.appendChild(modalDom);
-    modalDom.addEventListener('click', modalClick);
+    modalDom.addEventListener('click', modalTrigger);
   }
   /**
    * @description 点击遮罩层
    */
 
 
-  function modalClick() {
+  function modalTrigger() {
     // 如果点击遮罩层允许关闭则触发键盘隐藏事件
-    options.closeOnClickModal && hideKeyBoard();
+    closeOnClickModal && hideKeyBoard();
 
-    if (options.modalClick) {
-      options.modalClick();
+    if (modalClick) {
+      modalClick();
     }
   }
   /**
@@ -2636,14 +2551,14 @@ var KeyBoard = function KeyBoard(options, ref) {
 
   function signUpKeyboard() {
     // 设置baseUrl
-    options.handApi && axiosConfig(options.handApi); // 给键盘绑定相应input
+    handApi && axiosConfig(handApi); // 给键盘绑定相应input
 
     document.querySelectorAll('input').forEach(function (input) {
       // 存在data-mode属性的可以注册为键盘input
       if (input.getAttribute('data-mode') !== null) {
         inputList.push(input);
         input.addEventListener('focus', showKeyBoard);
-        options.blurHide && input.addEventListener('blur', hideKeyBoard);
+        blurHide && input.addEventListener('blur', hideKeyBoard);
       }
     });
   }
@@ -2676,10 +2591,7 @@ var KeyBoard = function KeyBoard(options, ref) {
     currentInput = null;
     setKeyBoardVisible(false); // 如果存在关闭钩子函数则触发
 
-    if (options.closed) {
-      options.closed();
-    } // 重置显示mode
-
+    closed && closed(); // 重置显示mode
 
     setKeyBoardShowMode('default'); // 重置中文模式下显示字符
 
@@ -2696,7 +2608,7 @@ var KeyBoard = function KeyBoard(options, ref) {
 
 
   function setDefaultKeyBoardMode(mode) {
-    var _defaultRef$current, _defaultRef$current2, _options$modeList, _options$modeList2;
+    var _defaultRef$current, _defaultRef$current2;
 
     useEventEmitter.emit('keyBoardChange', 'CN');
 
@@ -2721,9 +2633,9 @@ var KeyBoard = function KeyBoard(options, ref) {
       // 手写键盘
 
       case 'handwrite':
-        if ((_options$modeList = options.modeList) != null && _options$modeList.find(function (mode) {
+        if (modeList != null && modeList.find(function (mode) {
           return mode === 'handwrite';
-        }) && options.handApi) {
+        }) && handApi) {
           setKeyBoardShowMode('handwrite');
           useEventEmitter.emit('keyBoardChange', 'handwrite');
         } else {
@@ -2736,7 +2648,7 @@ var KeyBoard = function KeyBoard(options, ref) {
       case 'symbol':
         setKeyBoardShowMode('default'); // 如果存在标点键盘才允许切换
 
-        if ((_options$modeList2 = options.modeList) != null && _options$modeList2.find(function (mode) {
+        if (modeList != null && modeList.find(function (mode) {
           return mode === 'symbol';
         })) {
           var _defaultRef$current3, _defaultRef$current4;
@@ -2765,8 +2677,8 @@ var KeyBoard = function KeyBoard(options, ref) {
    */
 
 
-  function trigger(_ref) {
-    var type = _ref.type;
+  function trigger(_ref2) {
+    var type = _ref2.type;
 
     switch (type) {
       case 'handwrite':
@@ -2780,14 +2692,12 @@ var KeyBoard = function KeyBoard(options, ref) {
           if (!currentInput) return;
           var changeValue = currentInput.value.substr(0, currentInput.value.length - 1); // 自动改变
 
-          if (options.autoChange) {
+          if (autoChange) {
             currentInput.value = changeValue;
           } // 触发change事件
 
 
-          if (options.onChange) {
-            options.onChange(changeValue);
-          }
+          onChange && onChange(changeValue);
         }
         break;
     }
@@ -2802,17 +2712,12 @@ var KeyBoard = function KeyBoard(options, ref) {
     if (!currentInput) return;
     var changeValue = currentInput.value + value; // 自动改变
 
-    if (options.autoChange) {
+    if (autoChange) {
       currentInput.value = changeValue;
     }
 
-    if (options.onChange) {
-      options.onChange(changeValue);
-    }
-
-    if (options.keyChange) {
-      options.keyChange(value);
-    }
+    onChange && onChange(changeValue);
+    keyChange && keyChange(value);
   }
   /**
    * @description 拼音转中文
@@ -2831,23 +2736,16 @@ var KeyBoard = function KeyBoard(options, ref) {
         return a + pinYinNote[b];
       }, '') : pinYinNote[keys[0]] : ''
     });
-
-    if (options.keyChange) {
-      options.keyChange(value);
-    }
+    keyChange && keyChange(value);
   }
 
   return React__default.createElement(CSSTransition, {
     in: keyBoardVisible,
-    classNames: classNames('move-bottom-to-top' ),
-    timeout: options.transitionTime || 300,
+    classNames: classNames(animateClass),
+    timeout: transitionTime,
     unmountOnExit: true
   }, React__default.createElement(KeyBoardContext$1.Provider, {
-    value: {
-      color: options.color || '#eaa050',
-      modeList: options.modeList || ['handwrite', 'symbol'],
-      handApi: options.handApi,
-      transitionTime: options.transitionTime || 300,
+    value: _extends({}, provideValue, {
       closeKeyBoard: function closeKeyBoard() {
         hideKeyBoard();
       },
@@ -2855,7 +2753,7 @@ var KeyBoard = function KeyBoard(options, ref) {
         setKeyBoardShowMode('default');
         useEventEmitter.emit('resultReset');
       }
-    }
+    })
   }, React__default.createElement("div", {
     className: "key-board",
     onMouseDown: function onMouseDown(event) {
@@ -2875,9 +2773,9 @@ var KeyBoard = function KeyBoard(options, ref) {
     trigger: trigger
   }), keyBoardMode === 'handwrite' && React__default.createElement(HandBoard$1, {
     trigger: trigger
-  }))), options.showHandleBar && React__default.createElement(DragHandle, {
-    color: options.color,
-    dargHandleText: options.dargHandleText
+  }))), showHandleBar && React__default.createElement(DragHandle, {
+    color: color,
+    dargHandleText: dargHandleText
   }))));
 };
 

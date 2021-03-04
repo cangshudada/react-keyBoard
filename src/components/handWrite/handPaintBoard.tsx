@@ -1,7 +1,7 @@
 import { KeyBoardContext } from '../..';
 import useEventEmitter from '../../hooks/useEventEmitter';
 import { getWordFromHandWrite } from '../../serve';
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { memo, useRef, useState, useEffect, useContext } from 'react';
 export interface IProps {
   lib: 'CN' | 'EN';
 }
@@ -20,7 +20,7 @@ let isMouseDown = false,
 // 定时器id
 let timer: NodeJS.Timeout | undefined = undefined;
 
-const HandBoard: React.FC<IProps> = props => {
+const HandBoard: React.FC<IProps> = memo(props => {
   // canvas dom
   const canvas: React.RefObject<HTMLCanvasElement> = useRef(null);
   const [width, setWidth] = useState(500); // 宽
@@ -245,6 +245,6 @@ const HandBoard: React.FC<IProps> = props => {
       ></canvas>
     </div>
   );
-};
+});
 
 export default HandBoard;

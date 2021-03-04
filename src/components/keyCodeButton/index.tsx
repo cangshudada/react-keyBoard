@@ -5,7 +5,7 @@ import CloseIcon from '../../icons/close';
 import UpperIcon from '../../icons//upper';
 import DeleteIcon from '../../icons/delete';
 import HandWriteIcon from '../../icons/handwrite';
-import React, { useState, useContext } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { KeyBoardContext, IKeyCode } from '../../index';
 
 export interface IProps {
@@ -18,9 +18,10 @@ export interface IProps {
   click?: (parmas: IKeyCode) => void;
 }
 
-const KeyCodeButton: React.FC<IProps> = props => {
+const KeyCodeButton: React.FC<IProps> = memo(props => {
   const [isHover, setHoverStatus] = useState(false);
   const { color } = useContext(KeyBoardContext);
+  console.log('color :>> ', color);
 
   /**
    * @description 获取样式
@@ -107,6 +108,6 @@ const KeyCodeButton: React.FC<IProps> = props => {
       )}
     </button>
   );
-};
+});
 
 export default KeyCodeButton;

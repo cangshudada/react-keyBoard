@@ -1,9 +1,11 @@
-import 'react-app-polyfill/ie11';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import './index.less';
-import '../dist/keyboard.min.css';
+import * as React from 'react';
+import '../src/libs/flexible.js';
+import * as ReactDOM from 'react-dom';
+// import '../src/assets/css/_BASE_.less';
+// import KeyBoard from '../src/index';
 import KeyBoard from '../dist';
+import '../dist/keyboard.min.css';
 
 const App = () => {
   return (
@@ -32,6 +34,7 @@ const App = () => {
       </form>
       <KeyBoard
         modal
+        color="#ff00f2"
         handApi="https://service.chaunve.com/HandWriteRecognizerService.asmx/Command"
         onChange={value => {
           console.log('value', value);

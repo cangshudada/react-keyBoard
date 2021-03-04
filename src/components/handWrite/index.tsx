@@ -2,14 +2,14 @@ import './handwrite.less';
 import KeyCodeButton from '../keyCodeButton';
 import HandPaintBoard from './handPaintBoard';
 import { KeyBoardContext, IKeyCode } from '../..';
-import React, { useState, useContext } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import useEventEmitter from '../../hooks/useEventEmitter';
 
 export interface Iprops {
   trigger?: (parmas: IKeyCode) => void;
 }
 
-const HandBoard: React.FC<Iprops> = props => {
+const HandBoard: React.FC<Iprops> = memo(props => {
   const { closeKeyBoard, changeDefaultBoard } = useContext(KeyBoardContext);
 
   // 手写板部分按钮列表
@@ -86,6 +86,6 @@ const HandBoard: React.FC<Iprops> = props => {
       </div>
     </div>
   );
-};
+});
 
 export default HandBoard;

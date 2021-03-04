@@ -1,13 +1,12 @@
 import DragIcon from '../../icons/drag';
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import handleDragEvent from '../../hooks/useDrag';
-
 export interface IProps {
   color?: string;
   dargHandleText?: string;
 }
 
-const DragHandle: React.FC<IProps> = props => {
+const DragHandle: React.FC<IProps> = memo(props => {
   useEffect(() => {
     // 执行拖拽事件
     if (document.querySelector('.key-board-drag-handle')) {
@@ -30,6 +29,6 @@ const DragHandle: React.FC<IProps> = props => {
       <DragIcon fill="none" stroke={props.color} />
     </div>
   );
-};
+});
 
 export default DragHandle;

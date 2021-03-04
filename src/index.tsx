@@ -1,21 +1,20 @@
-import './libs/flexible.js';
 import './assets/css/_BASE_.less';
 import classNames from 'classnames';
 import Result from './components/result';
 import HandBoard from './components/handWrite';
-import DefaultBoard, { IDefaultRef } from './components/default';
 import { axiosConfig } from './helper/axiosConfig';
 import useEventEmitter from './hooks/useEventEmitter';
 import { CSSTransition } from 'react-transition-group';
 import { pinYinNote } from './constants/pinyin_dict_note';
 import DragHandle from './components/dragHandleBar/dragHandle';
+import DefaultBoard, { IDefaultRef } from './components/default';
 import React, {
+  useRef,
   useState,
   useEffect,
-  createContext,
-  useRef,
-  useImperativeHandle,
   forwardRef,
+  createContext,
+  useImperativeHandle,
 } from 'react';
 export interface IDictionary<T> {
   [key: string]: T;
@@ -27,7 +26,6 @@ export type IValue = {
   code?: string;
   value?: string;
 };
-
 export interface IKeyBoard {
   /** value auto change */
   autoChange?: boolean;
@@ -65,18 +63,20 @@ export interface IKeyBoardRef {
   reSignUp: () => void;
 }
 
-export const KeyBoardContext = createContext<{
+export interface IKeyBoardContext {
   color: string;
   modeList: ('handwrite' | 'symbol')[];
   handApi?: string;
   transitionTime: number;
   closeKeyBoard: () => void;
   changeDefaultBoard: () => void;
-}>({
-  color: '#eaa050',
-  modeList: ['handwrite', 'symbol'],
+}
+
+export const KeyBoardContext = createContext<IKeyBoardContext>({
+  color: '',
+  modeList: [],
   handApi: '',
-  transitionTime: 300,
+  transitionTime: 0,
   closeKeyBoard: () => {},
   changeDefaultBoard: () => {},
 });
@@ -86,32 +86,47 @@ let inputList: HTMLInputElement[] = [];
 // 当前触发的input
 let currentInput: HTMLInputElement | null = null;
 
-const KeyBoard = (options: IKeyBoard, ref: any) => {
-  // Specifies the default values for props:
-  options = {
-    ...options,
-    autoChange: options.autoChange || true,
-    color: options.color || '#eaa050',
-    modeList: options.modeList || ['handwrite', 'symbol'],
-    blurHide: options.blurHide || false,
-    showHandleBar: options.showHandleBar || true,
-    closeOnClickModal: options.closeOnClickModal || true,
-    dargHandleText: options.dargHandleText || '将键盘拖到您喜欢的位置',
-  };
-
+const KeyBoard = (
+  {
+    autoChange = true,
+    color = '#eaa050',
+    modeList = ['handwrite', 'symbol'],
+    blurHide = true,
+    showHandleBar = true,
+    closeOnClickModal = true,
+    dargHandleText = '将键盘拖到您喜欢的位置',
+    animateClass = 'move-bottom-to-top',
+    transitionTime = 300,
+    handApi,
+    modal,
+    keyChange,
+    onChange,
+    closed,
+    modalClick,
+  }: IKeyBoard,
+  ref: any
+) => {
   // 键盘显隐控制
   const [keyBoardVisible, setKeyBoardVisible] = useState<boolean>(false);
   // 键盘展示模式
   const [keyBoardMode, setKeyBoardShowMode] = useState<string>('default');
   // 中文模式下显示字符
   const [resultVal, setResultVal] = useState<IValue>({});
-
   // 默认键盘的ref
   const defaultRef = useRef<IDefaultRef>();
+  // provide value
+  const [provideValue, setProvideValue] = useState<IKeyBoardContext>({
+    color: '',
+    modeList: [],
+    handApi: '',
+    transitionTime: 0,
+    closeKeyBoard: () => {},
+    changeDefaultBoard: () => {},
+  });
 
   // 键盘组件初始化准备
   useEffect(() => {
-    options.modal && addMoDal();
+    modal && addMoDal();
     // 注册键盘
     signUpKeyboard();
 
@@ -123,13 +138,23 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
     return () => {
       document
         .querySelector('.key-board-modal')
-        ?.removeEventListener('click', modalClick);
+        ?.removeEventListener('click', modalTrigger);
       inputList.forEach(input => {
         input.removeEventListener('focus', showKeyBoard);
         input.removeEventListener('blur', hideKeyBoard);
       });
     };
   }, []);
+
+  // props 变化
+  useEffect(() => {
+    setProvideValue(datasource => ({
+      ...datasource,
+      color,
+      handApi,
+      transitionTime,
+    }));
+  }, [color, handApi, transitionTime]);
 
   // 暴露给父组件的子组件方法
   useImperativeHandle(ref, () => {
@@ -149,7 +174,7 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
     if (document.querySelector('.key-board-modal')) {
       document
         .querySelector('.key-board-modal')
-        ?.addEventListener('click', modalClick);
+        ?.addEventListener('click', modalTrigger);
       return;
     }
 
@@ -158,18 +183,18 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
     modalDom.className = 'key-board-modal';
     modalDom.style.display = 'none';
     document.querySelector('body')?.appendChild(modalDom);
-    modalDom.addEventListener('click', modalClick);
+    modalDom.addEventListener('click', modalTrigger);
   }
 
   /**
    * @description 点击遮罩层
    */
-  function modalClick() {
+  function modalTrigger() {
     // 如果点击遮罩层允许关闭则触发键盘隐藏事件
-    options.closeOnClickModal && hideKeyBoard();
+    closeOnClickModal && hideKeyBoard();
 
-    if (options.modalClick) {
-      options.modalClick();
+    if (modalClick) {
+      modalClick();
     }
   }
 
@@ -178,14 +203,14 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
    */
   function signUpKeyboard() {
     // 设置baseUrl
-    options.handApi && axiosConfig(options.handApi);
+    handApi && axiosConfig(handApi);
     // 给键盘绑定相应input
     document.querySelectorAll('input').forEach(input => {
       // 存在data-mode属性的可以注册为键盘input
       if (input.getAttribute('data-mode') !== null) {
         inputList.push(input);
         input.addEventListener('focus', showKeyBoard);
-        options.blurHide && input.addEventListener('blur', hideKeyBoard);
+        blurHide && input.addEventListener('blur', hideKeyBoard);
       }
     });
   }
@@ -222,9 +247,7 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
     setKeyBoardVisible(false);
 
     // 如果存在关闭钩子函数则触发
-    if (options.closed) {
-      options.closed();
-    }
+    closed && closed();
 
     // 重置显示mode
     setKeyBoardShowMode('default');
@@ -265,10 +288,7 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
         break;
       // 手写键盘
       case 'handwrite':
-        if (
-          options.modeList?.find(mode => mode === 'handwrite') &&
-          options.handApi
-        ) {
+        if (modeList?.find(mode => mode === 'handwrite') && handApi) {
           setKeyBoardShowMode('handwrite');
           useEventEmitter.emit('keyBoardChange', 'handwrite');
         } else {
@@ -279,7 +299,7 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
       case 'symbol':
         setKeyBoardShowMode('default');
         // 如果存在标点键盘才允许切换
-        if (options.modeList?.find(mode => mode === 'symbol')) {
+        if (modeList?.find(mode => mode === 'symbol')) {
           defaultRef.current?.keyButtonTrigger({
             data: '.?123',
             type: 'change2num',
@@ -317,14 +337,12 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
           );
 
           // 自动改变
-          if (options.autoChange) {
+          if (autoChange) {
             currentInput.value = changeValue;
           }
 
           // 触发change事件
-          if (options.onChange) {
-            options.onChange(changeValue);
-          }
+          onChange && onChange(changeValue);
         }
         break;
     }
@@ -336,20 +354,15 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
    */
   function change(value: string) {
     if (!currentInput) return;
-
     const changeValue = currentInput.value + value;
 
     // 自动改变
-    if (options.autoChange) {
+    if (autoChange) {
       currentInput.value = changeValue;
     }
 
-    if (options.onChange) {
-      options.onChange(changeValue);
-    }
-    if (options.keyChange) {
-      options.keyChange(value);
-    }
+    onChange && onChange(changeValue);
+    keyChange && keyChange(value);
   }
 
   /**
@@ -369,24 +382,20 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
           : pinYinNote[keys[0]]
         : '',
     });
-    if (options.keyChange) {
-      options.keyChange(value);
-    }
+
+    keyChange && keyChange(value);
   }
 
   return (
     <CSSTransition
       in={keyBoardVisible}
-      classNames={classNames('move-bottom-to-top' || options.animateClass)}
-      timeout={options.transitionTime || 300}
+      classNames={classNames(animateClass)}
+      timeout={transitionTime}
       unmountOnExit
     >
       <KeyBoardContext.Provider
         value={{
-          color: options.color || '#eaa050',
-          modeList: options.modeList || ['handwrite', 'symbol'],
-          handApi: options.handApi,
-          transitionTime: options.transitionTime || 300,
+          ...provideValue,
           closeKeyBoard: () => {
             hideKeyBoard();
           },
@@ -421,11 +430,8 @@ const KeyBoard = (options: IKeyBoard, ref: any) => {
             </div>
           </div>
           {/* 拖拽句柄 */}
-          {options.showHandleBar && (
-            <DragHandle
-              color={options.color}
-              dargHandleText={options.dargHandleText}
-            />
+          {showHandleBar && (
+            <DragHandle color={color} dargHandleText={dargHandleText} />
           )}
         </div>
       </KeyBoardContext.Provider>
