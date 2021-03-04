@@ -21,6 +21,9 @@ export interface IProps {
   trigger: (parmas: IKeyCode) => void;
   translate: (value: string) => void;
 }
+export interface IDefaultRef {
+  keyButtonTrigger: (parmas: IKeyCode) => void;
+}
 
 // 最后一行按钮列表
 const defaultLineList: IKeyCode[] = [
@@ -88,7 +91,7 @@ const DefaultBoard = (props: IProps, ref: any) => {
   // 暴露给父组件的子组件方法
   useImperativeHandle(ref, () => {
     return {
-      _keyButtonClick(parmas: IKeyCode) {
+      keyButtonTrigger(parmas: IKeyCode) {
         keyButtonClick(parmas);
       },
     };

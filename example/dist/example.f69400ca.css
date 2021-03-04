@@ -9,55 +9,47 @@ body,
 .demo {
   width: 100%;
   height: 100%;
-  font-size: 0.07813rem;
+  font-size: 30px;
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
 }
 .demo form {
-  margin-top: 0.26042rem;
+  margin-top: 100px;
   width: 80%;
-  height: 1.30208rem;
+  height: 500px;
 }
 .demo form .form-group {
-  margin-bottom: 0.08333rem;
+  margin-bottom: 32px;
 }
 .demo form .form-group label {
   display: inline-block;
-  margin-bottom: 0.04167rem;
+  margin-bottom: 16px;
 }
 .demo form .form-group .form-control {
   display: block;
   width: 100%;
-  height: 0.125rem;
-  padding: 0.03125rem 0.0625rem;
-  font-size: 0.08333rem;
+  height: 48px;
+  padding: 12px 24px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
-  border: 0.0026rem solid #ced4da;
-  border-radius: 0.02083rem;
-  -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-  transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 }
 .demo form .form-group .form-control:focus {
   color: #495057;
   background-color: #fff;
   border-color: #80bdff;
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.01563rem rgba(0, 123, 255, 0.25);
-          box-shadow: 0 0 0 0.01563rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.25);
 }
 
 .key-board{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);width:3.9974rem;height:auto;border-radius:.11719rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;z-index:3000}.key-board .key-board-container{width:100%;height:100%;border-radius:.11719rem;background:#ededed;-webkit-box-shadow:0 0 .05208rem rgba(0,0,0,.16);box-shadow:0 0 .05208rem rgba(0,0,0,.16);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.key-board .key-board-container .key-board-area{margin:.13021rem 0;width:3.73698rem;height:1.33594rem;background:#e0e0e0;border-radius:.08073rem}.key-board .key-board-drag-handle{cursor:move;position:absolute;bottom:-.13021rem;right:.05208rem;background-image:url(https://www.cmappax.com/editorResource/keyboard/dragCH.svg);background-repeat:no-repeat;background-size:cover;background-position:50%;width:1.11979rem;height:.19531rem;z-index:-1;display:-webkit-box;display:-ms-flexbox;display:flex;font-size:.05208rem;font-weight:500;line-height:.26042rem;letter-spacing:.00521rem;text-indent:.19531rem}.key-board .key-board-drag-handle span{max-width:.83333rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.key-board .key-board-drag-handle svg{position:absolute;right:.14323rem;top:65%;-webkit-transform:translateY(-50%);transform:translateY(-50%);width:.07813rem;height:.07813rem}.key-board-modal{position:fixed;left:0;right:0;top:0;bottom:0;background:#000;opacity:.5;z-index:2999}.move-bottom-to-top-enter{opacity:0;-webkit-transform:translate(-50%,100%);transform:translate(-50%,100%)}.move-bottom-to-top-enter-active{-webkit-transition:opacity .6s,-webkit-transform .6s;transition:opacity .6s,-webkit-transform .6s;transition:opacity .6s,transform .6s;transition:opacity .6s,transform .6s,-webkit-transform .6s}.move-bottom-to-top-enter-active,.move-bottom-to-top-exit{opacity:1;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.move-bottom-to-top-exit-active{opacity:0;-webkit-transform:translate(-50%,100%);transform:translate(-50%,100%);-webkit-transition:opacity .6s,-webkit-transform .6s;transition:opacity .6s,-webkit-transform .6s;transition:opacity .6s,transform .6s;transition:opacity .6s,transform .6s,-webkit-transform .6s}

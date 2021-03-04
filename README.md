@@ -89,6 +89,8 @@ const App:React.FC = () => {
       />
   )
 }
+
+ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 ### 配置参数
@@ -103,6 +105,7 @@ const App:React.FC = () => {
 
 |       参数        |                             说明                             |         默认值          |   类型   | 是否必须 |  版本   |
 | :---------------: | :----------------------------------------------------------: | :---------------------: | :------: | :------: | :-----: |
+|    autoChange     |           当前注册并聚焦的输入框是否自动更新value            |          true           | boolean  |    否    | v1.0.0+ |
 |       color       |                           _主题色_                           |        `#eaa050`        |  string  |    否    | v1.0.0+ |
 |     modeList      |     _键盘渲染模式列表_，若不传 handApi 则不会出现手写板      | ["handwrite", "symbol"] | string[] |    否    | v1.0.0+ |
 |     blurHide      |              _是否当前输入框 blur 事件触发隐藏_              |          true           | boolean  |    否    | v1.0.0+ |
@@ -112,27 +115,62 @@ const App:React.FC = () => {
 | closeOnClickModal |                    是否点击遮罩层隐藏键盘                    |          true           | boolean  |    否    | v1.0.0+ |
 |      handApi      |            手写识别接口，若不传则无法切换手写模块            |                         |  string  |    否    | v1.0.0+ |
 |   animateClass    | 键盘显隐动画，内置 slide 动画，如若需要其他动画，可传入相应类名自定义动画 |                         |  string  |    否    | v1.0.0+ |
+|  transitionTime   |                     键盘显隐动画所需时间                     |           300           |  number  |    否    | v1.0.0+ |
 
 ### Events
 
 |    参数    |                     说明                     |           类型            |  版本   |
 | :--------: | :------------------------------------------: | :-----------------------: | :-----: |
 | keyChange  |    按键触发事件，返回当前触发的按键的标识    | (_value_: string) => void | v1.0.0+ |
-|   change   | value 改变事件，返回当前最新通过键盘输入的值 | (_value_: string) => void | v1.0.0+ |
+|  onChange  | value 改变事件，返回当前最新通过键盘输入的值 | (_value_: string) => void | v1.0.0+ |
 |   closed   |                 键盘关闭事件                 |        () => void         | v1.0.0+ |
 | modalClick |                 遮罩点击事件                 |        () => void         | v1.0.0+ |
 
-####
-
 ## Component Event
 
-| 方法名         | 说明                                                              | 参数  |
-| -------------- | ----------------------------------------------------------------- | ----- |
-| signUpKeyboard | 重新给 input 注册绑定键盘,当页面有新的 input 标签出现时调用此方法 | event |
+| 方法名   | 说明                                                         | 参数  |
+| -------- | ------------------------------------------------------------ | ----- |
+| reSignUp | 重新给 input 注册绑定键盘,当页面有新的 input 标签出现时调用此方法 | event |
+
+```tsx
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import "virtual-keyboard-react/keyboard.min.css";
+import KeyBoard, { IKeyBoardRef } from "virtual-keyboard-react";
+
+const App:React.FC = () => {
+  const ref = React.useRef<IKeyBoardRef>();
+
+  // .... 相关逻辑
+  // 重新给键盘注册输入框
+  if (ref.current) {
+      ref.current.reSignUp();
+  }
+    
+  return (
+    {/* 注册键盘的输入框 */}
+    <input data-mode />
+    {/* 键盘 */}
+    <KeyBoard
+        modal
+        ref={ref}
+        onChange={value => {
+          console.log('value', value);
+        }}
+        keyChange={value => {
+          console.log('value', value);
+        }}
+      />
+  )
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+
 
 ## 其他说明
 
 - **_有问题欢迎提交_ Issue。**
 - **_本项目为作者一人维护，精力有限，有限解决重大 bug，望理解。_**
 - **用于生产环境，请使用 `release` 版本代码**
-- **_暂只支持`vue2.x`版本引入_**
