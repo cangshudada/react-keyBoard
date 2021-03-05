@@ -9,3 +9,5 @@ export const KeyBoardContext = createContext<IKeyBoardContext>({
   closeKeyBoard: () => {},
   changeDefaultBoard: () => {},
 });
+
+export const KeyBoardProvide = KeyBoardContext.Provider;

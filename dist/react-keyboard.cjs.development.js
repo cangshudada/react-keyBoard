@@ -95,6 +95,7 @@ var KeyBoardContext = /*#__PURE__*/React.createContext({
   closeKeyBoard: function closeKeyBoard() {},
   changeDefaultBoard: function changeDefaultBoard() {}
 });
+var KeyBoardProvide = KeyBoardContext.Provider;
 
 var Result = /*#__PURE__*/React.memo(function (_ref) {
   var resultVal = _ref.resultVal,
@@ -2703,7 +2704,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
     classNames: classNames(animateClass),
     timeout: transitionTime,
     unmountOnExit: true
-  }, React__default.createElement(KeyBoardContext.Provider, {
+  }, React__default.createElement(KeyBoardProvide, {
     value: {
       color: color,
       handApi: handApi,

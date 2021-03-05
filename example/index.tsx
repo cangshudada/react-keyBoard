@@ -2,10 +2,8 @@ import './index.less';
 import * as React from 'react';
 import '../src/libs/flexible.js';
 import * as ReactDOM from 'react-dom';
-// import '../src/assets/css/_BASE_.less';
-// import KeyBoard from '../src/index';
-import KeyBoard from '../dist';
-import '../dist/keyboard.min.css';
+import '../src/assets/css/_BASE_.less';
+import KeyBoard from '../src/index';
 
 const App = () => {
   return (
@@ -35,6 +33,7 @@ const App = () => {
       <KeyBoard
         modal
         color="#292953"
+        handApi="https://service.chaunve.com/HandWriteRecognizerService.asmx/Command"
         onChange={value => {
           console.log('value', value);
         }}

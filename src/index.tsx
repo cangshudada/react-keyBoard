@@ -6,7 +6,7 @@ import { axiosConfig } from './helper/axiosConfig';
 import useEventEmitter from './hooks/useEventEmitter';
 import { CSSTransition } from 'react-transition-group';
 import { pinYinNote } from './constants/pinyin_dict_note';
-import { KeyBoardContext } from './context/keyboardContext';
+import { KeyBoardProvide } from './context/keyboardContext';
 import DragHandle from './components/dragHandleBar/dragHandle';
 import DefaultBoard, { IDefaultRef } from './components/default';
 import React, {
@@ -364,7 +364,7 @@ const KeyBoard = (
       timeout={transitionTime}
       unmountOnExit
     >
-      <KeyBoardContext.Provider
+      <KeyBoardProvide
         value={{
           color,
           handApi,
@@ -408,7 +408,7 @@ const KeyBoard = (
             <DragHandle color={color} dargHandleText={dargHandleText} />
           )}
         </div>
-      </KeyBoardContext.Provider>
+      </KeyBoardProvide>
     </CSSTransition>
   );
 };
