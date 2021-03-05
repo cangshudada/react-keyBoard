@@ -1,10 +1,10 @@
 import './handwrite.less';
+import { IKeyCode } from '../..';
 import KeyCodeButton from '../keyCodeButton';
 import HandPaintBoard from './handPaintBoard';
-import { KeyBoardContext, IKeyCode } from '../..';
 import React, { memo, useState, useContext } from 'react';
 import useEventEmitter from '../../hooks/useEventEmitter';
-
+import { KeyBoardContext } from '../../context/keyboardContext';
 export interface Iprops {
   trigger?: (parmas: IKeyCode) => void;
 }

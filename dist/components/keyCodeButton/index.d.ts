@@ -1,6 +1,6 @@
 import './keyCodeButton.less';
-import React from 'react';
 import { IKeyCode } from '../../index';
+import React from 'react';
 export interface IProps {
     type: string;
     data: string;

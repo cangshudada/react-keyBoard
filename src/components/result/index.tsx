@@ -1,8 +1,9 @@
 import './result.less';
+import { IValue } from '../..';
 import { groupSplitArray } from '../../utils';
-import { KeyBoardContext, IValue } from '../..';
 import useEventEmitter from '../../hooks/useEventEmitter';
-import React, { memo, useContext, useState, useEffect } from 'react';
+import { KeyBoardContext } from '../../context/keyboardContext';
+import React, { memo, useState, useEffect, useContext } from 'react';
 export interface IProps {
   resultVal: IValue;
   change?: (word: string) => void;
@@ -89,10 +90,7 @@ const Result: React.FC<IProps> = memo(({ resultVal, change }) => {
             ))}
         </div>
         {valueList.length > 11 && (
-          <div
-            className="key-board-result-show-more"
-            v-if="valueList.length > 11"
-          >
+          <div className="key-board-result-show-more">
             <span
               style={borderStyle}
               onClick={() => {

@@ -1,3 +1,5 @@
+import useEventEmitter from './useEventEmitter';
+
 /**
  * @description 句柄拖拽事件
  * @param {HTMLElement} target
@@ -20,6 +22,7 @@ export default function handleDragEvent(target: HTMLElement) {
       targetParent.style.top = top + 'px';
     };
     document.onmouseup = () => {
+      useEventEmitter.emit('updateBound');
       document.onmousemove = null;
       document.onmouseup = null;
     };
@@ -44,6 +47,7 @@ export default function handleDragEvent(target: HTMLElement) {
       targetParent.style.top = top + 'px';
     };
     document.ontouchend = () => {
+      useEventEmitter.emit('updateBound');
       document.ontouchmove = null;
       document.ontouchend = null;
     };

@@ -34,8 +34,7 @@ const App = () => {
       </form>
       <KeyBoard
         modal
-        color="#ff00f2"
-        handApi="https://service.chaunve.com/HandWriteRecognizerService.asmx/Command"
+        color="#292953"
         onChange={value => {
           console.log('value', value);
         }}

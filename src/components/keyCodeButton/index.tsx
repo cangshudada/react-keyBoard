@@ -1,12 +1,13 @@
 import './keyCodeButton.less';
 import classNames from 'classnames';
+import { IKeyCode } from '../../index';
 import BackIcon from '../../icons/back';
 import CloseIcon from '../../icons/close';
 import UpperIcon from '../../icons//upper';
 import DeleteIcon from '../../icons/delete';
 import HandWriteIcon from '../../icons/handwrite';
 import React, { memo, useState, useContext } from 'react';
-import { KeyBoardContext, IKeyCode } from '../../index';
+import { KeyBoardContext } from '../../context/keyboardContext';
 
 export interface IProps {
   type: string;
@@ -21,7 +22,6 @@ export interface IProps {
 const KeyCodeButton: React.FC<IProps> = memo(props => {
   const [isHover, setHoverStatus] = useState(false);
   const { color } = useContext(KeyBoardContext);
-  console.log('color :>> ', color);
 
   /**
    * @description 获取样式

@@ -1,61 +1,7 @@
 import classNames from 'classnames';
-import React__default, { createElement, memo, useState, useContext, useRef, useEffect, forwardRef, useImperativeHandle, createContext } from 'react';
+import React__default, { createContext, memo, useContext, useState, useEffect, createElement, useRef, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
 import { CSSTransition } from 'react-transition-group';
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
 
 /**
  * @description 按特定长度切割数组
@@ -73,6 +19,186 @@ var groupSplitArray = function groupSplitArray(array, subGroupLength) {
 
   return newArray;
 };
+
+var EventEmitter = /*#__PURE__*/function () {
+  function EventEmitter() {
+    this.listeners = {};
+  }
+
+  var _proto = EventEmitter.prototype;
+
+  _proto.on = function on(type, cb) {
+    var _this = this;
+
+    var cbs = this.listeners[type];
+
+    if (!cbs) {
+      cbs = [];
+    }
+
+    cbs.push(cb);
+    this.listeners[type] = cbs;
+    return function () {
+      _this.remove(type, cb);
+    };
+  };
+
+  _proto.emit = function emit(type) {
+    var cbs = this.listeners[type];
+
+    if (Array.isArray(cbs)) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      for (var i = 0; i < cbs.length; i++) {
+        var cb = cbs[i];
+
+        if (typeof cb === 'function') {
+          cb.apply(void 0, args);
+        }
+      }
+    }
+  };
+
+  _proto.remove = function remove(type, cb) {
+    if (cb) {
+      var cbs = this.listeners[type];
+      if (!cbs) return;
+      cbs = cbs.filter(function (eMap) {
+        return eMap !== cb;
+      });
+      this.listeners[type] = cbs;
+    } else {
+      this.listeners[type] = null;
+      delete this.listeners[type];
+    }
+  };
+
+  return EventEmitter;
+}();
+
+var useEventEmitter = /*#__PURE__*/new EventEmitter();
+
+var KeyBoardContext = /*#__PURE__*/createContext({
+  color: '',
+  modeList: [],
+  handApi: '',
+  transitionTime: 0,
+  closeKeyBoard: function closeKeyBoard() {},
+  changeDefaultBoard: function changeDefaultBoard() {}
+});
+
+var Result = /*#__PURE__*/memo(function (_ref) {
+  var resultVal = _ref.resultVal,
+      change = _ref.change;
+
+  var _useContext = useContext(KeyBoardContext),
+      color = _useContext.color;
+
+  var _useState = useState(''),
+      status = _useState[0],
+      setStatus = _useState[1];
+
+  var _useState2 = useState([]),
+      valueList = _useState2[0],
+      setValueList = _useState2[1];
+
+  var _useState3 = useState([]),
+      showList = _useState3[0],
+      setShowList = _useState3[1];
+
+  var _useState4 = useState(0),
+      showIndex = _useState4[0],
+      setShowIndex = _useState4[1]; // border color
+
+
+  var borderStyle = {
+    borderTopColor: color
+  };
+  useEffect(function () {
+    useEventEmitter.on('keyBoardChange', function (status) {
+      // 会引起高度变化 需要重新计算画板
+      useEventEmitter.emit('updateBound');
+      setStatus(status); // 重置
+
+      reset();
+    });
+    useEventEmitter.on('getWordsFromServer', function (serverData) {
+      var _valueList = Array.from(new Set(serverData.replace(/\s+/g, '').split('')));
+
+      setValueList(_valueList);
+      setShowList(groupSplitArray(_valueList, 11));
+    });
+    return function () {
+      useEventEmitter.remove('keyBoardChange');
+      useEventEmitter.remove('getWordsFromServer');
+    };
+  }, []); // 监听传入值的变化
+
+  useEffect(function () {
+    var _resultVal$value;
+
+    setShowIndex(0);
+
+    var _valueList = (resultVal == null ? void 0 : (_resultVal$value = resultVal.value) == null ? void 0 : _resultVal$value.split('')) || [];
+
+    setValueList(_valueList);
+
+    if (_valueList.length === 0) {
+      setShowList([]);
+      return;
+    }
+
+    setShowList(groupSplitArray(_valueList, 11));
+  }, [resultVal]);
+  /**
+   * @description 重置
+   */
+
+  function reset() {
+    setShowIndex(0);
+    setValueList([]);
+    setShowList([]);
+    useEventEmitter.emit('resultReset');
+  }
+
+  return status === 'CN' || status === 'handwrite' ? React__default.createElement("div", {
+    className: "key-board-result",
+    style: {
+      color: color
+    }
+  }, status === 'CN' && React__default.createElement("div", {
+    className: "key-board-code-show"
+  }, resultVal.code), React__default.createElement("div", {
+    className: "key-board-result-show"
+  }, React__default.createElement("div", {
+    className: "key-board-result-show-container"
+  }, showList.length > 0 && showList[showIndex].map(function (key, index) {
+    return React__default.createElement("span", {
+      key: index,
+      onClick: function onClick() {
+        reset(); // 传递选中的字
+
+        change && change(key);
+      }
+    }, index + 1, ".", key);
+  })), valueList.length > 11 && React__default.createElement("div", {
+    className: "key-board-result-show-more"
+  }, React__default.createElement("span", {
+    style: borderStyle,
+    onClick: function onClick() {
+      if (showIndex === 0) return;
+      setShowIndex(showIndex - 1);
+    }
+  }), React__default.createElement("span", {
+    style: borderStyle,
+    onClick: function onClick() {
+      if (showIndex === showList.length - 1) return;
+      setShowIndex(showIndex + 1);
+    }
+  })))) : React__default.createElement("div", null);
+});
 
 function SvgBack(props) {
   return createElement("svg", Object.assign({
@@ -216,12 +342,11 @@ var KeyCodeButton = /*#__PURE__*/memo(function (props) {
 
   var _useContext = useContext(KeyBoardContext),
       color = _useContext.color;
-
-  console.log('color :>> ', color);
   /**
    * @description 获取样式
    * @returns {React.CSSProperties}
    */
+
 
   function getStyle() {
     if (props.isUpper && props.type === 'upper' || props.isNum && props.type === 'change2num' || props.isSymbol && props.type === '#+=' || isHover) {
@@ -295,6 +420,42 @@ var KeyCodeButton = /*#__PURE__*/memo(function (props) {
     dangerouslySetInnerHTML: getCode()
   }));
 });
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -1049,66 +1210,6 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 });
-
-var EventEmitter = /*#__PURE__*/function () {
-  function EventEmitter() {
-    this.listeners = {};
-  }
-
-  var _proto = EventEmitter.prototype;
-
-  _proto.on = function on(type, cb) {
-    var _this = this;
-
-    var cbs = this.listeners[type];
-
-    if (!cbs) {
-      cbs = [];
-    }
-
-    cbs.push(cb);
-    this.listeners[type] = cbs;
-    return function () {
-      _this.remove(type, cb);
-    };
-  };
-
-  _proto.emit = function emit(type) {
-    var cbs = this.listeners[type];
-
-    if (Array.isArray(cbs)) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      for (var i = 0; i < cbs.length; i++) {
-        var cb = cbs[i];
-
-        if (typeof cb === 'function') {
-          cb.apply(void 0, args);
-        }
-      }
-    }
-  };
-
-  _proto.remove = function remove(type, cb) {
-    if (cb) {
-      var cbs = this.listeners[type];
-      if (!cbs) return;
-      cbs = cbs.filter(function (eMap) {
-        return eMap !== cb;
-      });
-      this.listeners[type] = cbs;
-    } else {
-      this.listeners[type] = null;
-      delete this.listeners[type];
-    }
-  };
-
-  return EventEmitter;
-}();
-
-var useEventEmitter = /*#__PURE__*/new EventEmitter();
 
 /**
  * @description axiso 配置
@@ -1959,6 +2060,7 @@ function SvgDrag(props) {
  * @description 句柄拖拽事件
  * @param {HTMLElement} target
  */
+
 function handleDragEvent(target) {
   var targetParent = target.parentNode; // PC端
 
@@ -1977,6 +2079,7 @@ function handleDragEvent(target) {
     };
 
     document.onmouseup = function () {
+      useEventEmitter.emit('updateBound');
       document.onmousemove = null;
       document.onmouseup = null;
     };
@@ -2002,6 +2105,7 @@ function handleDragEvent(target) {
     };
 
     document.ontouchend = function () {
+      useEventEmitter.emit('updateBound');
       document.ontouchmove = null;
       document.ontouchend = null;
     };
@@ -2282,136 +2386,6 @@ var DefaultBoard = function DefaultBoard(props, ref) {
 
 var DefaultBoard$1 = /*#__PURE__*/forwardRef(DefaultBoard);
 
-var KeyBoardContext = /*#__PURE__*/createContext({
-  color: '',
-  modeList: [],
-  handApi: '',
-  transitionTime: 0,
-  closeKeyBoard: function closeKeyBoard() {},
-  changeDefaultBoard: function changeDefaultBoard() {}
-}); // 注册键盘绑定的input列表
-
-var Result = /*#__PURE__*/memo(function (_ref) {
-  var resultVal = _ref.resultVal,
-      change = _ref.change;
-
-  var _useContext = useContext(KeyBoardContext),
-      color = _useContext.color;
-
-  var _useState = useState(''),
-      status = _useState[0],
-      setStatus = _useState[1];
-
-  var _useState2 = useState([]),
-      valueList = _useState2[0],
-      setValueList = _useState2[1];
-
-  var _useState3 = useState([]),
-      showList = _useState3[0],
-      setShowList = _useState3[1];
-
-  var _useState4 = useState(0),
-      showIndex = _useState4[0],
-      setShowIndex = _useState4[1]; // border color
-
-
-  var borderStyle = {
-    borderTopColor: color
-  };
-  useEffect(function () {
-    useEventEmitter.on('keyBoardChange', function (status) {
-      // 会引起高度变化 需要重新计算画板
-      useEventEmitter.emit('updateBound');
-      setStatus(status); // 重置
-
-      reset();
-    });
-    useEventEmitter.on('getWordsFromServer', function (serverData) {
-      var _valueList = Array.from(new Set(serverData.replace(/\s+/g, '').split('')));
-
-      setValueList(_valueList);
-      setShowList(groupSplitArray(_valueList, 11));
-    });
-    return function () {
-      useEventEmitter.remove('keyBoardChange');
-      useEventEmitter.remove('getWordsFromServer');
-    };
-  }, []); // 监听传入值的变化
-
-  useEffect(function () {
-    var _resultVal$value;
-
-    setShowIndex(0);
-
-    var _valueList = (resultVal == null ? void 0 : (_resultVal$value = resultVal.value) == null ? void 0 : _resultVal$value.split('')) || [];
-
-    setValueList(_valueList);
-
-    if (_valueList.length === 0) {
-      setShowList([]);
-      return;
-    }
-
-    setShowList(groupSplitArray(_valueList, 11));
-  }, [resultVal]);
-  /**
-   * @description 重置
-   */
-
-  function reset() {
-    setShowIndex(0);
-    setValueList([]);
-    setShowList([]);
-    useEventEmitter.emit('resultReset');
-  }
-
-  return status === 'CN' || status === 'handwrite' ? React__default.createElement("div", {
-    className: "key-board-result",
-    style: {
-      color: color
-    }
-  }, status === 'CN' && React__default.createElement("div", {
-    className: "key-board-code-show"
-  }, resultVal.code), React__default.createElement("div", {
-    className: "key-board-result-show"
-  }, React__default.createElement("div", {
-    className: "key-board-result-show-container"
-  }, showList.length > 0 && showList[showIndex].map(function (key, index) {
-    return React__default.createElement("span", {
-      key: index,
-      onClick: function onClick() {
-        reset(); // 传递选中的字
-
-        change && change(key);
-      }
-    }, index + 1, ".", key);
-  })), valueList.length > 11 && React__default.createElement("div", {
-    className: "key-board-result-show-more",
-    "v-if": "valueList.length > 11"
-  }, React__default.createElement("span", {
-    style: borderStyle,
-    onClick: function onClick() {
-      if (showIndex === 0) return;
-      setShowIndex(showIndex - 1);
-    }
-  }), React__default.createElement("span", {
-    style: borderStyle,
-    onClick: function onClick() {
-      if (showIndex === showList.length - 1) return;
-      setShowIndex(showIndex + 1);
-    }
-  })))) : React__default.createElement("div", null);
-});
-
-var KeyBoardContext$1 = /*#__PURE__*/createContext({
-  color: '',
-  modeList: [],
-  handApi: '',
-  transitionTime: 0,
-  closeKeyBoard: function closeKeyBoard() {},
-  changeDefaultBoard: function changeDefaultBoard() {}
-}); // 注册键盘绑定的input列表
-
 var inputList = []; // 当前触发的input
 
 var currentInput = null;
@@ -2458,19 +2432,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
       setResultVal = _useState3[1]; // 默认键盘的ref
 
 
-  var defaultRef = useRef(); // provide value
-
-  var _useState4 = useState({
-    color: '',
-    modeList: [],
-    handApi: '',
-    transitionTime: 0,
-    closeKeyBoard: function closeKeyBoard() {},
-    changeDefaultBoard: function changeDefaultBoard() {}
-  }),
-      provideValue = _useState4[0],
-      setProvideValue = _useState4[1]; // 键盘组件初始化准备
-
+  var defaultRef = useRef(); // 键盘组件初始化准备
 
   useEffect(function () {
     modal && addMoDal(); // 注册键盘
@@ -2489,17 +2451,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
         input.removeEventListener('blur', hideKeyBoard);
       });
     };
-  }, []); // props 变化
-
-  useEffect(function () {
-    setProvideValue(function (datasource) {
-      return _extends({}, datasource, {
-        color: color,
-        handApi: handApi,
-        transitionTime: transitionTime
-      });
-    });
-  }, [color, handApi, transitionTime]); // 暴露给父组件的子组件方法
+  }, []); // 暴露给父组件的子组件方法
 
   useImperativeHandle(ref, function () {
     return {
@@ -2744,8 +2696,12 @@ var KeyBoard = function KeyBoard(_ref, ref) {
     classNames: classNames(animateClass),
     timeout: transitionTime,
     unmountOnExit: true
-  }, React__default.createElement(KeyBoardContext$1.Provider, {
-    value: _extends({}, provideValue, {
+  }, React__default.createElement(KeyBoardContext.Provider, {
+    value: {
+      color: color,
+      handApi: handApi,
+      modeList: modeList,
+      transitionTime: transitionTime,
       closeKeyBoard: function closeKeyBoard() {
         hideKeyBoard();
       },
@@ -2753,7 +2709,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
         setKeyBoardShowMode('default');
         useEventEmitter.emit('resultReset');
       }
-    })
+    }
   }, React__default.createElement("div", {
     className: "key-board",
     onMouseDown: function onMouseDown(event) {
@@ -2782,4 +2738,3 @@ var KeyBoard = function KeyBoard(_ref, ref) {
 var index = /*#__PURE__*/forwardRef(KeyBoard);
 
 export default index;
-export { KeyBoardContext$1 as KeyBoardContext };

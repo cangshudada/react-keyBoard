@@ -13,8 +13,9 @@ import {
   NUMBER_CODE,
   SYMBOL_CODE,
 } from '../../constants/key_code';
-import { KeyBoardContext, IKeyCode } from '../..';
+import { IKeyCode } from '../..';
 import useEventEmitter from '../../hooks/useEventEmitter';
+import { KeyBoardContext } from '../../context/keyboardContext';
 
 export interface IProps {
   change: (value: string) => void;

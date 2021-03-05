@@ -6,6 +6,7 @@ import { axiosConfig } from './helper/axiosConfig';
 import useEventEmitter from './hooks/useEventEmitter';
 import { CSSTransition } from 'react-transition-group';
 import { pinYinNote } from './constants/pinyin_dict_note';
+import { KeyBoardContext } from './context/keyboardContext';
 import DragHandle from './components/dragHandleBar/dragHandle';
 import DefaultBoard, { IDefaultRef } from './components/default';
 import React, {
@@ -13,11 +14,18 @@ import React, {
   useState,
   useEffect,
   forwardRef,
-  createContext,
   useImperativeHandle,
 } from 'react';
 export interface IDictionary<T> {
   [key: string]: T;
+}
+export interface IKeyBoardContext {
+  color: string;
+  modeList: ('handwrite' | 'symbol')[];
+  handApi?: string;
+  transitionTime: number;
+  closeKeyBoard: () => void;
+  changeDefaultBoard: () => void;
 }
 
 export type IKeyCode = Record<'data' | 'type', string>;
@@ -63,24 +71,6 @@ export interface IKeyBoardRef {
   reSignUp: () => void;
 }
 
-export interface IKeyBoardContext {
-  color: string;
-  modeList: ('handwrite' | 'symbol')[];
-  handApi?: string;
-  transitionTime: number;
-  closeKeyBoard: () => void;
-  changeDefaultBoard: () => void;
-}
-
-export const KeyBoardContext = createContext<IKeyBoardContext>({
-  color: '',
-  modeList: [],
-  handApi: '',
-  transitionTime: 0,
-  closeKeyBoard: () => {},
-  changeDefaultBoard: () => {},
-});
-
 // 注册键盘绑定的input列表
 let inputList: HTMLInputElement[] = [];
 // 当前触发的input
@@ -114,15 +104,6 @@ const KeyBoard = (
   const [resultVal, setResultVal] = useState<IValue>({});
   // 默认键盘的ref
   const defaultRef = useRef<IDefaultRef>();
-  // provide value
-  const [provideValue, setProvideValue] = useState<IKeyBoardContext>({
-    color: '',
-    modeList: [],
-    handApi: '',
-    transitionTime: 0,
-    closeKeyBoard: () => {},
-    changeDefaultBoard: () => {},
-  });
 
   // 键盘组件初始化准备
   useEffect(() => {
@@ -145,16 +126,6 @@ const KeyBoard = (
       });
     };
   }, []);
-
-  // props 变化
-  useEffect(() => {
-    setProvideValue(datasource => ({
-      ...datasource,
-      color,
-      handApi,
-      transitionTime,
-    }));
-  }, [color, handApi, transitionTime]);
 
   // 暴露给父组件的子组件方法
   useImperativeHandle(ref, () => {
@@ -395,7 +366,10 @@ const KeyBoard = (
     >
       <KeyBoardContext.Provider
         value={{
-          ...provideValue,
+          color,
+          handApi,
+          modeList,
+          transitionTime,
           closeKeyBoard: () => {
             hideKeyBoard();
           },
