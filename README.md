@@ -19,6 +19,18 @@
   src="https://img.shields.io/npm/v/virtual-keyboard-react.svg?style=flat-square"></a>
 </p>
 
+
+> Other versions
+
+- For Vue 2.0, Please to using [keyboard-virtual-vue](https://github.com/cangshudada/vue-keyBoard).
+- For Vue 3.0, Please to using [vue-keyboard-virtual-next](https://github.com/cangshudada/vue-keyBoard-next).
+
+
+
+**They have the same function as the React version**
+
+
+
 ## Overview
 
 <h3 align="center">
