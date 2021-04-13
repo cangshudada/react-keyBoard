@@ -20,7 +20,7 @@
 </p>
 
 
-> Other versions
+> ### Other versions
 
 - For Vue 2.0, Please to using [keyboard-virtual-vue](https://github.com/cangshudada/vue-keyBoard).
 - For Vue 3.0, Please to using [vue-keyboard-virtual-next](https://github.com/cangshudada/vue-keyBoard-next).
