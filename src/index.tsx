@@ -58,9 +58,9 @@ export interface IKeyBoard {
   /** modal can hide when click modal */
   closeOnClickModal?: boolean;
   /** key change */
-  keyChange?: (value: string) => void;
+  keyChange?: (value: string, prop: string | HTMLInputElement) => void;
   /** value change */
-  onChange?: (value: string) => void;
+  onChange?: (value: string, prop: string | HTMLInputElement) => void;
   /** keyboard close hook */
   closed?: () => void;
   /** keyboard modal click hook */
@@ -69,6 +69,8 @@ export interface IKeyBoard {
 export interface IKeyBoardRef {
   /** keyboard reSign up */
   reSignUp: () => void;
+  /** get current input */
+  getCurrentInput: () => HTMLInputElement | null;
 }
 
 // 注册键盘绑定的input列表
@@ -133,6 +135,10 @@ const KeyBoard = (
       // 重新给键盘注册输入框
       reSignUp() {
         signUpKeyboard();
+      },
+      // 获取当前注册的输入框
+      getCurrentInput() {
+        return currentInput;
       },
     };
   });
@@ -313,7 +319,11 @@ const KeyBoard = (
           }
 
           // 触发change事件
-          onChange && onChange(changeValue);
+          onChange &&
+            onChange(
+              changeValue,
+              currentInput.getAttribute('data-prop') || currentInput
+            );
         }
         break;
     }
@@ -332,8 +342,14 @@ const KeyBoard = (
       currentInput.value = changeValue;
     }
 
-    onChange && onChange(changeValue);
-    keyChange && keyChange(value);
+    onChange &&
+      onChange(
+        changeValue,
+        currentInput.getAttribute('data-prop') || currentInput
+      );
+
+    keyChange &&
+      keyChange(value, currentInput.getAttribute('data-prop') || currentInput);
   }
 
   /**
@@ -341,6 +357,7 @@ const KeyBoard = (
    * @param {string} value
    */
   function translate(value: string) {
+    if (!currentInput) return;
     const reg = new RegExp(`^${value}\\w*`);
     const keys = Object.keys(pinYinNote)
       .filter(key => reg.test(key))
@@ -354,7 +371,8 @@ const KeyBoard = (
         : '',
     });
 
-    keyChange && keyChange(value);
+    keyChange &&
+      keyChange(value, currentInput.getAttribute('data-prop') || currentInput);
   }
 
   return (
