@@ -109,9 +109,12 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 ### Input 标签属性
 
-|     属性      | 说明                                                                                                          | 类型   | 可选值                                      | 默认值         |
-| :-----------: | :------------------------------------------------------------------------------------------------------------ | :----- | :------------------------------------------ | :------------- |
+|     属性      | 说明                                                         | 类型   | 可选值                                      | 默认值         |
+| :-----------: | :----------------------------------------------------------- | :----- | :------------------------------------------ | :------------- |
 | **data-mode** | 弹出输入法的类型：<br>`en` 英文小写<br>`number`数字<br>`symbol` 标点<br>`handwrite` 手写<br/> `不传` 默认中文 | String | `en`<br>`number`<br>`symbol`<br>`handwrite` | `default as *` |
+| **data-prop** | 注册的输入框的类型                                           | String | *                                           |                |
+
+
 
 ### Props 属性
 
@@ -131,18 +134,19 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 ### Events
 
-|    参数    |                     说明                     |           类型            |  版本   |
-| :--------: | :------------------------------------------: | :-----------------------: | :-----: |
-| keyChange  |    按键触发事件，返回当前触发的按键的标识    | (_value_: string) => void | v1.0.0+ |
-|  onChange  | value 改变事件，返回当前最新通过键盘输入的值 | (_value_: string) => void | v1.0.0+ |
-|   closed   |                 键盘关闭事件                 |        () => void         | v1.0.0+ |
-| modalClick |                 遮罩点击事件                 |        () => void         | v1.0.0+ |
+|    参数    |                             说明                             |                          类型                           |  版本   |
+| :--------: | :----------------------------------------------------------: | :-----------------------------------------------------: | :-----: |
+| keyChange  | 按键触发事件，第一个参数为当前触发的按键的标识,`第二个参数为当前聚焦输入框的props值，若没有则直接返回当前聚焦的input元素（v1.0.2版本之后）` | (_value_: string,prop:string\|HTMLInputElement) => void | v1.0.0+ |
+|  onChange  | value改变事件，第一个参数为当前最新通过键盘输入的值，`第二个参数为当前聚焦输入框的props值，若没有则直接返回当前聚焦的input元素（v1.0.2版本之后）` | (_value_: string,prop:string\|HTMLInputElement) => void | v1.0.0+ |
+|   closed   |                         键盘关闭事件                         |                       () => void                        | v1.0.0+ |
+| modalClick |                         遮罩点击事件                         |                       () => void                        | v1.0.0+ |
 
 ## Component Event
 
-| 方法名   | 说明                                                         | 参数  |
-| -------- | ------------------------------------------------------------ | ----- |
-| reSignUp | 重新给 input 注册绑定键盘,当页面有新的 input 标签出现时调用此方法 | event |
+| 方法名          | 说明                                                         | 类型                            | 版本    |
+| --------------- | ------------------------------------------------------------ | ------------------------------- | ------- |
+| reSignUp        | 重新给 input 注册绑定键盘,当页面有新的 input 标签出现时调用此方法 | event                           | v1.0.0+ |
+| getCurrentInput | 获取当前聚焦的输入框                                         | （）=> HTMLInputElement \| null | v1.0.2+ |
 
 ```tsx
 import * as React from 'react';
@@ -157,6 +161,8 @@ const App:React.FC = () => {
   // 重新给键盘注册输入框
   if (ref.current) {
       ref.current.reSignUp();
+      const currentInput = ref.current.getCurrentInput();
+      console.log('currentInput', value);
   }
     
   return (

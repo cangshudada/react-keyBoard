@@ -1,14 +1,7 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var classNames = _interopDefault(require('classnames'));
-var React = require('react');
-var React__default = _interopDefault(React);
-var axios = _interopDefault(require('axios'));
-var reactTransitionGroup = require('react-transition-group');
+import classNames from 'classnames';
+import React__default, { createContext, memo, useContext, useState, useEffect, createElement, useRef, forwardRef, useImperativeHandle } from 'react';
+import axios from 'axios';
+import { CSSTransition } from 'react-transition-group';
 
 /**
  * @description 按特定长度切割数组
@@ -87,7 +80,7 @@ var EventEmitter = /*#__PURE__*/function () {
 
 var useEventEmitter = /*#__PURE__*/new EventEmitter();
 
-var KeyBoardContext = /*#__PURE__*/React.createContext({
+var KeyBoardContext = /*#__PURE__*/createContext({
   color: '',
   modeList: [],
   handApi: '',
@@ -97,26 +90,26 @@ var KeyBoardContext = /*#__PURE__*/React.createContext({
 });
 var KeyBoardProvide = KeyBoardContext.Provider;
 
-var Result = /*#__PURE__*/React.memo(function (_ref) {
+var Result = /*#__PURE__*/memo(function (_ref) {
   var resultVal = _ref.resultVal,
       change = _ref.change;
 
-  var _useContext = React.useContext(KeyBoardContext),
+  var _useContext = useContext(KeyBoardContext),
       color = _useContext.color;
 
-  var _useState = React.useState(''),
+  var _useState = useState(''),
       status = _useState[0],
       setStatus = _useState[1];
 
-  var _useState2 = React.useState([]),
+  var _useState2 = useState([]),
       valueList = _useState2[0],
       setValueList = _useState2[1];
 
-  var _useState3 = React.useState([]),
+  var _useState3 = useState([]),
       showList = _useState3[0],
       setShowList = _useState3[1];
 
-  var _useState4 = React.useState(0),
+  var _useState4 = useState(0),
       showIndex = _useState4[0],
       setShowIndex = _useState4[1]; // border color
 
@@ -124,7 +117,7 @@ var Result = /*#__PURE__*/React.memo(function (_ref) {
   var borderStyle = {
     borderTopColor: color
   };
-  React.useEffect(function () {
+  useEffect(function () {
     useEventEmitter.on('keyBoardChange', function (status) {
       // 会引起高度变化 需要重新计算画板
       useEventEmitter.emit('updateBound');
@@ -144,7 +137,7 @@ var Result = /*#__PURE__*/React.memo(function (_ref) {
     };
   }, []); // 监听传入值的变化
 
-  React.useEffect(function () {
+  useEffect(function () {
     var _resultVal$value;
 
     setShowIndex(0);
@@ -209,56 +202,56 @@ var Result = /*#__PURE__*/React.memo(function (_ref) {
 });
 
 function SvgBack(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 58.6 35.1"
-  }, props), React.createElement("defs", null, React.createElement("style", null, '.st0{stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;}.st1{stroke-width:2.1499;stroke-miterlimit:10;}.st2{stroke-width:3.2571;stroke-miterlimit:10;}')), React.createElement("g", null, React.createElement("path", {
+  }, props), createElement("defs", null, createElement("style", null, '.st0{stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;}.st1{stroke-width:2.1499;stroke-miterlimit:10;}.st2{stroke-width:3.2571;stroke-miterlimit:10;}')), createElement("g", null, createElement("path", {
     className: "st0",
     d: "M8.4,8.8h37.1c6.7,0,12.2,5.4,12.2,12.2l0,0c0,7.2-5.8,13.1-13.1,13.1c0,0,0,0,0,0h-24"
-  }), React.createElement("g", null, React.createElement("path", {
+  }), createElement("g", null, createElement("path", {
     className: "st1",
     d: "M3,9.1l8.6,6.9c0.1,0.1,0.3,0,0.3-0.1V2c0-0.2-0.2-0.2-0.3-0.1L3,8.8C2.9,8.9,2.9,9,3,9.1z"
-  }), React.createElement("path", {
+  }), createElement("path", {
     className: "st2",
     d: "M10.4,4.8c0,0-5.4,4.1-5.4,4s5.6,3.8,5.6,3.8L10.4,4.8z"
   }))));
 }
 
 function SvgClose(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 50 35.93"
-  }, props), React.createElement("defs", null, React.createElement("style", null, '.cls-2,.cls-3,.cls-4{stroke-width:2px;}.cls-3,.cls-4{stroke-linecap:round;}.cls-3{stroke-dasharray:3 4;}.cls-5,.cls-6{stroke-miterlimit:10;}.cls-5{stroke-width:2.2px;}.cls-6{stroke-width:3.39px;}')), React.createElement("g", null, React.createElement("g", null, React.createElement("g", null, React.createElement("g", null, React.createElement("rect", {
+  }, props), createElement("defs", null, createElement("style", null, '.cls-2,.cls-3,.cls-4{stroke-width:2px;}.cls-3,.cls-4{stroke-linecap:round;}.cls-3{stroke-dasharray:3 4;}.cls-5,.cls-6{stroke-miterlimit:10;}.cls-5{stroke-width:2.2px;}.cls-6{stroke-width:3.39px;}')), createElement("g", null, createElement("g", null, createElement("g", null, createElement("g", null, createElement("rect", {
     className: "cls-1",
     width: "50",
     height: "27",
     rx: "5"
-  }), React.createElement("rect", {
+  }), createElement("rect", {
     className: "cls-2",
     x: "1",
     y: "1",
     width: "48",
     height: "25",
     rx: "4"
-  })), React.createElement("g", null, React.createElement("path", {
+  })), createElement("g", null, createElement("path", {
     className: "cls-3",
     d: "M9.5,8H40.18"
-  }), React.createElement("path", {
+  }), createElement("path", {
     className: "cls-3",
     d: "M9.5,13.5H40.18"
-  }), React.createElement("path", {
+  }), createElement("path", {
     className: "cls-3",
     d: "M9.5,19h3.17"
-  }), React.createElement("path", {
+  }), createElement("path", {
     className: "cls-4",
     d: "M16.5,19h17"
-  }), React.createElement("path", {
+  }), createElement("path", {
     className: "cls-3",
     d: "M37.5,19h2.68"
-  }))), React.createElement("path", {
+  }))), createElement("path", {
     className: "cls-5",
     d: "M25.18,34.82l5.32-4.25a.07.07,0,0,0,0-.12H19.83a.07.07,0,0,0,0,.12l5.31,4.25A.06.06,0,0,0,25.18,34.82Z"
-  }), React.createElement("circle", {
+  }), createElement("circle", {
     className: "cls-6",
     cx: "25.14",
     cy: "32.58",
@@ -267,20 +260,20 @@ function SvgClose(props) {
 }
 
 function SvgUpper(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     width: 24.37,
     height: 32.991,
     viewBox: "0 0 24.37 32.991"
-  }, props), React.createElement("g", {
+  }, props), createElement("g", {
     transform: "translate(-437.841 -757.875)"
-  }, React.createElement("path", {
+  }, createElement("path", {
     d: "M800.491,472.525l-9.622-9.889a1.53,1.53,0,0,0-2.192,0l-9.622,9.889a1.529,1.529,0,0,0,1.1,2.6h3.975a1.529,1.529,0,0,1,1.529,1.529v8.927a1.529,1.529,0,0,0,1.529,1.529h5.175a1.529,1.529,0,0,0,1.529-1.529V476.65a1.529,1.529,0,0,1,1.529-1.529h3.976A1.529,1.529,0,0,0,800.491,472.525Z",
     transform: "translate(-339.747 296.701)",
     strokeLinecap: "round",
     strokeMiterlimit: "10",
     strokeWidth: "2"
-  }), React.createElement("line", {
+  }), createElement("line", {
     x2: "13.938",
     transform: "translate(442.92 789.865)",
     strokeLinecap: "round",
@@ -290,27 +283,27 @@ function SvgUpper(props) {
 }
 
 function SvgDelete(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     width: 66.467,
     height: 28.8,
     viewBox: "0 0 66.467 28.8"
-  }, props), React.createElement("g", {
+  }, props), createElement("g", {
     transform: "translate(-1618 -633)"
-  }, React.createElement("path", {
+  }, createElement("path", {
     d: "M842.844,477.922l-10.988,8.855a4.545,4.545,0,0,0,0,7.078l10.988,8.855a4.545,4.545,0,0,0,2.852,1.006h44.388a4.545,4.545,0,0,0,4.546-4.545v-17.71a4.545,4.545,0,0,0-4.546-4.545H845.7A4.545,4.545,0,0,0,842.844,477.922Z",
     transform: "translate(788.837 157.084)",
     strokeLinecap: "round",
     strokeMiterlimit: "10",
     strokeWidth: "2"
-  }), React.createElement("line", {
+  }), createElement("line", {
     x2: "7.743",
     y2: "7.743",
     transform: "translate(1651.233 644.027)",
     strokeLinecap: "round",
     strokeMiterlimit: "10",
     strokeWidth: "2"
-  }), React.createElement("line", {
+  }), createElement("line", {
     x1: "7.743",
     y2: "7.743",
     transform: "translate(1651.233 644.027)",
@@ -321,34 +314,34 @@ function SvgDelete(props) {
 }
 
 function SvgHandwrite(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     width: 24.784,
     height: 33.44,
     viewBox: "0 0 24.784 33.44"
-  }, props), React.createElement("g", {
+  }, props), createElement("g", {
     transform: "translate(-783.997 -761.616)"
-  }, React.createElement("rect", {
+  }, createElement("rect", {
     width: 7.324,
     height: 23.712,
     rx: 1.136,
     transform: "rotate(33.07 -892.505 1727.373)"
-  }), React.createElement("rect", {
+  }), createElement("rect", {
     width: 7.324,
     height: 4.946,
     rx: 1.136,
     transform: "rotate(33.07 -884.183 1729.853)"
-  }), React.createElement("path", {
+  }), createElement("path", {
     d: "M785.413 788.854l-.407 3.922a1.136 1.136 0 001.693 1.1l3.425-1.953a1.137 1.137 0 00.057-1.939l-3.017-1.968a1.137 1.137 0 00-1.751.838z"
   })));
 }
 
-var KeyCodeButton = /*#__PURE__*/React.memo(function (props) {
-  var _useState = React.useState(false),
+var KeyCodeButton = /*#__PURE__*/memo(function (props) {
+  var _useState = useState(false),
       isHover = _useState[0],
       setHoverStatus = _useState[1];
 
-  var _useContext = React.useContext(KeyBoardContext),
+  var _useContext = useContext(KeyBoardContext),
       color = _useContext.color;
   /**
    * @description 获取样式
@@ -1276,25 +1269,25 @@ clickC = []; // 轨迹标志位，为1则是终点
 // 定时器id
 
 var timer = undefined;
-var HandBoard = /*#__PURE__*/React.memo(function (props) {
+var HandBoard = /*#__PURE__*/memo(function (props) {
   // canvas dom
-  var canvas = React.useRef(null);
+  var canvas = useRef(null);
 
-  var _useState = React.useState(500),
+  var _useState = useState(500),
       width = _useState[0],
       setWidth = _useState[1]; // 宽
 
 
-  var _useState2 = React.useState(500),
+  var _useState2 = useState(500),
       height = _useState2[0],
       setHeight = _useState2[1]; // 高
 
 
-  var _useContext = React.useContext(KeyBoardContext),
+  var _useContext = useContext(KeyBoardContext),
       color = _useContext.color,
       transitionTime = _useContext.transitionTime;
 
-  React.useEffect(function () {
+  useEffect(function () {
     var _canvas$current;
 
     ctx = (_canvas$current = canvas.current) == null ? void 0 : _canvas$current.getContext('2d');
@@ -1514,8 +1507,8 @@ var HandBoard = /*#__PURE__*/React.memo(function (props) {
   }));
 });
 
-var HandBoard$1 = /*#__PURE__*/React.memo(function (props) {
-  var _useContext = React.useContext(KeyBoardContext),
+var HandBoard$1 = /*#__PURE__*/memo(function (props) {
+  var _useContext = useContext(KeyBoardContext),
       closeKeyBoard = _useContext.closeKeyBoard,
       changeDefaultBoard = _useContext.changeDefaultBoard; // 手写板部分按钮列表
 
@@ -1534,7 +1527,7 @@ var HandBoard$1 = /*#__PURE__*/React.memo(function (props) {
     type: 'close'
   }]; // 中英文模式
 
-  var _useState = React.useState(true),
+  var _useState = useState(true),
       isCn = _useState[0],
       setLanStatus = _useState[1];
 
@@ -2017,45 +2010,45 @@ var pinYinNote = {
 };
 
 function SvgDrag(props) {
-  return React.createElement("svg", Object.assign({
+  return createElement("svg", Object.assign({
     xmlns: "http://www.w3.org/2000/svg",
     width: "28",
     height: "29.526",
     viewBox: "0 0 28 29.526"
-  }, props), React.createElement("g", {
+  }, props), createElement("g", {
     id: "drag",
     transform: "translate(-1623.5 -915.5)"
-  }, React.createElement("line", {
+  }, createElement("line", {
     y2: "22.015",
     transform: "translate(1637.049 919.566)",
     strokeLinecap: "round",
     strokeMiterlimit: "10",
     strokeWidth: "3"
-  }), React.createElement("line", {
+  }), createElement("line", {
     x1: "22.015",
     transform: "translate(1626.041 930.574)",
     strokeLinecap: "round",
     strokeMiterlimit: "10",
     strokeWidth: "3"
-  }), React.createElement("path", {
+  }), createElement("path", {
     d: "M728.456,559.625l3.888-3.887,3.885,3.885",
     transform: "translate(904.603 361.262)",
     strokeLinecap: "round",
     strokeLinejoin: "round",
     strokeWidth: "3"
-  }), React.createElement("path", {
+  }), createElement("path", {
     d: "M736.229,568.465l-3.888,3.888-3.885-3.885",
     transform: "translate(904.603 371.172)",
     strokeLinecap: "round",
     strokeLinejoin: "round",
     strokeWidth: "3"
-  }), React.createElement("path", {
+  }), createElement("path", {
     d: "M735.8,561.184l3.888,3.888-3.885,3.885",
     transform: "translate(910.317 365.503)",
     strokeLinecap: "round",
     strokeLinejoin: "round",
     strokeWidth: "3"
-  }), React.createElement("path", {
+  }), createElement("path", {
     d: "M727.813,568.957l-3.888-3.888,3.885-3.885",
     transform: "translate(901.075 365.503)",
     strokeLinecap: "round",
@@ -2120,8 +2113,8 @@ function handleDragEvent(target) {
   };
 }
 
-var DragHandle = /*#__PURE__*/React.memo(function (props) {
-  React.useEffect(function () {
+var DragHandle = /*#__PURE__*/memo(function (props) {
+  useEffect(function () {
     // 执行拖拽事件
     if (document.querySelector('.key-board-drag-handle')) {
       var dragHandle = document.querySelector('.key-board-drag-handle'); // 注册拖拽
@@ -2180,42 +2173,42 @@ var DefaultBoard = function DefaultBoard(props, ref) {
       trigger = props.trigger,
       change = props.change;
 
-  var _useContext = React.useContext(KeyBoardContext),
+  var _useContext = useContext(KeyBoardContext),
       modeList = _useContext.modeList,
       handApi = _useContext.handApi,
       closeKeyBoard = _useContext.closeKeyBoard; // 键盘列表
 
 
-  var _useState = React.useState([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]),
+  var _useState = useState([DEFAULT_CODE.line1, DEFAULT_CODE.line2, DEFAULT_CODE.line3]),
       lineList = _useState[0],
       setLineList = _useState[1]; // 第四行变动的键码
 
 
-  var _useState2 = React.useState([]),
+  var _useState2 = useState([]),
       line4 = _useState2[0],
       setLine4 = _useState2[1]; // 大小写
 
 
-  var _useState3 = React.useState(false),
+  var _useState3 = useState(false),
       isUpper = _useState3[0],
       setUpperStatus = _useState3[1]; // 是否显示符号键盘
 
 
-  var _useState4 = React.useState(false),
+  var _useState4 = useState(false),
       isSymbol = _useState4[0],
       setSymbolStatus = _useState4[1]; // 是否显示数字键盘
 
 
-  var _useState5 = React.useState(false),
+  var _useState5 = useState(false),
       isNum = _useState5[0],
       setNumberStatus = _useState5[1]; // 中英文模式
 
 
-  var _useState6 = React.useState(true),
+  var _useState6 = useState(true),
       isCn = _useState6[0],
       setLanStatus = _useState6[1];
 
-  React.useEffect(function () {
+  useEffect(function () {
     setLine4(JSON.parse(JSON.stringify(defaultLineList))); // 判定是否存在手写
 
     if (modeList.find(function (mode) {
@@ -2236,7 +2229,7 @@ var DefaultBoard = function DefaultBoard(props, ref) {
     });
   }, []); // 暴露给父组件的子组件方法
 
-  React.useImperativeHandle(ref, function () {
+  useImperativeHandle(ref, function () {
     return {
       keyButtonTrigger: function keyButtonTrigger(parmas) {
         keyButtonClick(parmas);
@@ -2392,7 +2385,7 @@ var DefaultBoard = function DefaultBoard(props, ref) {
   })));
 };
 
-var DefaultBoard$1 = /*#__PURE__*/React.forwardRef(DefaultBoard);
+var DefaultBoard$1 = /*#__PURE__*/forwardRef(DefaultBoard);
 
 var inputList = []; // 当前触发的input
 
@@ -2425,24 +2418,24 @@ var KeyBoard = function KeyBoard(_ref, ref) {
       modalClick = _ref.modalClick;
 
   // 键盘显隐控制
-  var _useState = React.useState(false),
+  var _useState = useState(false),
       keyBoardVisible = _useState[0],
       setKeyBoardVisible = _useState[1]; // 键盘展示模式
 
 
-  var _useState2 = React.useState('default'),
+  var _useState2 = useState('default'),
       keyBoardMode = _useState2[0],
       setKeyBoardShowMode = _useState2[1]; // 中文模式下显示字符
 
 
-  var _useState3 = React.useState({}),
+  var _useState3 = useState({}),
       resultVal = _useState3[0],
       setResultVal = _useState3[1]; // 默认键盘的ref
 
 
-  var defaultRef = React.useRef(); // 键盘组件初始化准备
+  var defaultRef = useRef(); // 键盘组件初始化准备
 
-  React.useEffect(function () {
+  useEffect(function () {
     modal && addMoDal(); // 注册键盘
 
     signUpKeyboard();
@@ -2461,7 +2454,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
     };
   }, []); // 暴露给父组件的子组件方法
 
-  React.useImperativeHandle(ref, function () {
+  useImperativeHandle(ref, function () {
     return {
       // 重新给键盘注册输入框
       reSignUp: function reSignUp() {
@@ -2704,7 +2697,7 @@ var KeyBoard = function KeyBoard(_ref, ref) {
     keyChange && keyChange(value, currentInput.getAttribute('data-prop') || currentInput);
   }
 
-  return React__default.createElement(reactTransitionGroup.CSSTransition, {
+  return React__default.createElement(CSSTransition, {
     in: keyBoardVisible,
     classNames: classNames(animateClass),
     timeout: transitionTime,
@@ -2748,6 +2741,6 @@ var KeyBoard = function KeyBoard(_ref, ref) {
   }))));
 };
 
-var index = /*#__PURE__*/React.forwardRef(KeyBoard);
+var index = /*#__PURE__*/forwardRef(KeyBoard);
 
-exports.default = index;
+export default index;
